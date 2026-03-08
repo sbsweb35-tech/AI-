@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI & GitHub 연동 마스터 커리큘럼</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 400px; }
+        }
+        .tab-btn.active {
+            background-color: #0f766e;
+            color: white;
+            border-color: #0f766e;
+        }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Modal Style */
+        #deploy-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+        #deploy-modal.active { display: flex; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased selection:bg-teal-200 selection:text-teal-900">
+
+<!-- Chosen Palette: Warm Neutrals with Teal and Deep Slate -->
+<!-- Application Structure Plan: Dashboard focus with an integrated 'Deployment Assistant'. Since direct API push isn't feasible, I've added a 'Deployment Guide' modal that provides step-by-step instructions and a 'Copy Code' feature to streamline the manual GitHub upload process. This transforms the app from a simple curriculum viewer to a tool that facilitates its own deployment. -->
+<!-- Visualization & Content Choices: 1. Deployment Guide -> Inform -> Interactive Modal -> Step-by-step UI -> JS logic. 2. Curriculum Explorer -> Organize -> Interactive List -> Details of AI/Git study -> DOM updates. 3. Synergy Chart -> Change -> Line Chart -> Shows skill progress over 8 weeks -> Chart.js. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center font-bold text-xl tracking-tight text-teal-800">
+                    <span class="mr-2">💡</span> AI & Git Master
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openModal()" class="bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-teal-800 transition-colors shadow-sm">
+                        GitHub에 올리는 법
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <section id="overview" class="mb-12 fade-in">
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-9xl">🐙</div>
+                <div class="max-w-3xl relative z-10">
+                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4 tracking-tight">AI & GitHub 연동 연구 계획</h1>
+                    <p class="text-lg text-stone-600 mb-6 leading-relaxed">
+                        이 코드를 깃허브에 업로드하면 나만의 **AI 커리큘럼 웹사이트**가 완성됩니다. 8일간의 여정을 기록하고 리포지토리를 동기화하여 실무 능력을 증명하세요.
+                    </p>
+                    <div class="flex items-center space-x-3 text-sm font-medium text-teal-700 bg-teal-50 px-4 py-2 rounded-lg inline-flex">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                        </span>
+                        <span>현재 코드는 배포 준비가 완료되었습니다.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="explorer" class="mb-16 scroll-mt-20">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-bold text-stone-900 flex items-center">
+                    <span class="bg-teal-100 text-teal-800 p-2 rounded-lg mr-3 text-lg">📅</span> 주차별 학습 경로
+                </h2>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="lg:w-1/3">
+                    <div class="space-y-2" id="day-buttons"></div>
+                </div>
+                
+                <div class="lg:w-2/3">
+                    <div class="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden min-h-[500px] flex flex-col">
+                        <div id="header-bg" class="bg-teal-700 px-6 py-6 text-white transition-colors duration-500">
+                            <span id="detail-day-badge" class="inline-block bg-white/20 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 uppercase tracking-widest">Day 1</span>
+                            <h3 id="detail-title" class="text-2xl font-bold"></h3>
+                        </div>
+                        <div class="p-8 md:p-10 flex-grow bg-white" id="detail-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">학습 목표</h4>
+                                    <p id="detail-objective" class="text-stone-800 text-lg font-medium leading-snug mb-8"></p>
+                                    
+                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">활용 도구</h4>
+                                    <div id="detail-tools" class="flex flex-wrap gap-2"></div>
+                                </div>
+                                <div class="bg-stone-50 rounded-xl p-6 border border-stone-100">
+                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">상세 커리큘럼</h4>
+                                    <ul id="detail-list" class="space-y-4 text-stone-700 text-sm"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="mb-16 scroll-mt-20">
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
+                <h3 class="text-xl font-bold text-stone-800 mb-8">AI 실무 역량 성장 예측</h3>
+                <div class="chart-container">
+                    <canvas id="synergyChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- GitHub Deployment Modal -->
+    <div id="deploy-modal">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 overflow-hidden fade-in">
+            <div class="bg-stone-900 p-6 text-white flex justify-between items-center">
+                <h3 class="text-xl font-bold flex items-center"><span class="mr-2">🚀</span> GitHub 배포 가이드</h3>
+                <button onclick="closeModal()" class="text-stone-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div class="p-8 max-h-[70vh] overflow-y-auto">
+                <div class="space-y-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold mr-4">1</div>
+                        <div>
+                            <p class="font-bold text-stone-800">GitHub 리포지토리 생성</p>
+                            <p class="text-sm text-stone-600">GitHub 접속 후 'New Repository'를 클릭해 이름을 입력하고 만듭니다.</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold mr-4">2</div>
+                        <div class="w-full">
+                            <p class="font-bold text-stone-800">index.html 파일 생성</p>
+                            <p class="text-sm text-stone-600 mb-3">'Add file' -> 'Create new file'을 누르고 파일명을 <code class="bg-stone-100 px-1 rounded text-red-500">index.html</code>로 정합니다.</p>
+                            <button onclick="copyCurrentCode()" class="bg-stone-100 hover:bg-stone-200 text-stone-700 px-4 py-2 rounded-lg text-xs font-bold transition-colors">
+                                📋 현재 코드 전체 복사하기
+                            </button>
+                            <span id="copy-msg" class="text-teal-600 text-xs ml-2 opacity-0 transition-opacity">복사 완료!</span>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold mr-4">3</div>
+                        <div>
+                            <p class="font-bold text-stone-800">코드 붙여넣기 및 저장</p>
+                            <p class="text-sm text-stone-600">복사한 코드를 붙여넣고 하단의 'Commit changes' 버튼을 눌러 저장합니다.</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold mr-4">4</div>
+                        <div>
+                            <p class="font-bold text-stone-800">GitHub Pages 활성화 (웹 배포)</p>
+                            <p class="text-sm text-stone-600">Repo 설정(Settings) -> Pages 메뉴에서 Branch를 'main'으로 선택하고 Save를 누르면 수 분 내로 웹사이트 주소가 생성됩니다!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-stone-100">
+                    <button onclick="closeModal()" class="w-full bg-stone-900 text-white py-3 rounded-xl font-bold hover:bg-stone-800 transition-colors">확인했습니다</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-stone-900 text-stone-500 py-10 text-center text-xs">
+        <p>&copy; 2026 AI + GitHub Integration Curriculum Project.</p>
+    </footer>
+
+    <script>
+        const curriculumData = [
+            {
+                day: 1,
+                title: "AI 시대의 도래와 협업 환경 세팅",
+                objective: "생성형 AI의 원리를 이해하고, GitHub 계정 생성 및 프로젝트 관리 환경을 구축한다.",
+                content: ["인공지능 트렌드 및 패러다임 변화", "GitHub 기본 개념 및 리포지토리 생성", "AI 네이티브 업무 환경 세팅"],
+                tools: ["ChatGPT", "GitHub", "VS Code"],
+                color: "#0f766e"
+            },
+            {
+                day: 2,
+                title: "프롬프트 엔지니어링 & 버전 관리",
+                objective: "효과적인 프롬프트 기법을 배우고, 작성한 프롬프트를 Git으로 관리하기 시작한다.",
+                content: ["구조적 프롬프트 작성 공식", "Markdown 문서 작성 실습", "Git Commit을 통한 프롬프트 이력 관리"],
+                tools: ["ChatGPT", "Git", "Markdown"],
+                color: "#115e59"
+            },
+            {
+                day: 3,
+                title: "AI 기반 비즈니스 기획 자동화",
+                objective: "AI를 활용해 사업 기획안을 도출하고 이를 문서화하는 워크플로우를 익힌다.",
+                content: ["Claude 3를 활용한 브레인스토밍", "자료 조사 및 인사이트 도출 자동화", "GitHub Wiki를 이용한 지식 아카이빙"],
+                tools: ["Claude 3", "Notion AI", "GitHub Wiki"],
+                color: "#134e4a"
+            },
+            {
+                day: 4,
+                title: "멀티모달 AI 시각화 및 에셋 관리",
+                objective: "이미지 생성 AI를 활용하고, 프로젝트에 필요한 시각 자료를 관리한다.",
+                content: ["Midjourney를 이용한 고품질 이미지 생성", "AI 에셋의 파일 구조 최적화", "GitHub Issues를 통한 피드백 루프"],
+                tools: ["Midjourney", "DALL-E 3", "GitHub Issues"],
+                color: "#0d9488"
+            },
+            {
+                day: 5,
+                title: "GitHub Actions 자동화 실무",
+                objective: "AI API와 GitHub Actions를 결합하여 반복적인 업무를 자동화한다.",
+                content: ["API Key 보안 관리 (Secrets)", "GitHub Actions 자동화 스크립트 기초", "AI 응답 결과 자동 커밋 시스템"],
+                tools: ["OpenAI API", "GitHub Actions", "YAML"],
+                color: "#022c22"
+            },
+            {
+                day: 6,
+                title: "심층 데이터 분석 및 웹 리포트",
+                objective: "데이터 분석 AI를 활용해 복잡한 지표를 시각화하고 웹에 공유한다.",
+                content: ["ChatGPT ADA 데이터 분석 실습", "인터랙티브 대시보드 구상", "GitHub Pages를 통한 분석 결과 배포"],
+                tools: ["ChatGPT ADA", "Python", "GitHub Pages"],
+                color: "#0f766e"
+            },
+            {
+                day: 7,
+                title: "커스텀 AI 에이전트 구축",
+                objective: "특정 직무에 특화된 Custom GPTs를 제작하고 배포 프로세스를 익힌다.",
+                content: ["Custom GPTs 지식 베이스 최적화", "Instruction 고도화 실습", "GitHub README 기반 에이전트 설명서"],
+                tools: ["Custom GPTs", "Markdown"],
+                color: "#115e59"
+            },
+            {
+                day: 8,
+                title: "최종 프로젝트: 포트폴리오 완성",
+                objective: "전 과정의 결과물을 종합하여 GitHub 기반의 AI 포트폴리오를 완성한다.",
+                content: ["개별 AI 프로젝트 고도화", "GitHub Profile 꾸미기", "AI 역량 증명 포트폴리오 배포"],
+                tools: ["Total AI Stack", "GitHub Profile"],
+                color: "#134e4a"
+            }
+        ];
+
+        function initApp() {
+            renderButtons();
+            selectDay(1);
+            initChart();
+        }
+
+        function renderButtons() {
+            const container = document.getElementById('day-buttons');
+            curriculumData.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn w-full text-left px-5 py-4 rounded-xl border border-stone-200 font-medium transition-all duration-200 flex items-center group`;
+                btn.id = `btn-day-${item.day}`;
+                btn.onclick = () => selectDay(item.day);
+                btn.innerHTML = `
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center text-xs font-bold text-stone-500 mr-4 group-hover:bg-teal-100 group-hover:text-teal-700 transition-colors">
+                        ${item.day}
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-sm truncate">${item.title}</p>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectDay(dayId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'shadow-md'));
+            const activeBtn = document.getElementById(`btn-day-${dayId}`);
+            activeBtn.classList.add('active', 'shadow-md');
+
+            const data = curriculumData.find(d => d.day === dayId);
+            document.getElementById('header-bg').style.backgroundColor = data.color;
+            document.getElementById('detail-day-badge').innerText = `DAY ${data.day}`;
+            document.getElementById('detail-title').innerText = data.title;
+            document.getElementById('detail-objective').innerText = data.objective;
+            
+            const listContainer = document.getElementById('detail-list');
+            listContainer.innerHTML = '';
+            data.content.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center';
+                li.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-teal-500 mr-3"></span> <span>${item}</span>`;
+                listContainer.appendChild(li);
+            });
+
+            const toolsContainer = document.getElementById('detail-tools');
+            toolsContainer.innerHTML = '';
+            data.tools.forEach(tool => {
+                const span = document.createElement('span');
+                span.className = 'bg-stone-100 text-stone-600 text-[11px] font-bold px-3 py-1.5 rounded border border-stone-200 uppercase';
+                span.innerText = tool;
+                toolsContainer.appendChild(span);
+            });
+
+            const contentDiv = document.getElementById('detail-content');
+            contentDiv.classList.remove('fade-in');
+            void contentDiv.offsetWidth;
+            contentDiv.classList.add('fade-in');
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('synergyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1주', '2주', '3주', '4주', '5주', '6주', '7주', '8주'],
+                    datasets: [{
+                        label: '종합 AI 활용 역량',
+                        data: [15, 30, 45, 55, 75, 85, 92, 100],
+                        borderColor: '#0f766e',
+                        backgroundColor: 'rgba(15, 118, 110, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' } }, x: { grid: { display: false } } }
+                }
+            });
+        }
+
+        function openModal() { document.getElementById('deploy-modal').classList.add('active'); }
+        function closeModal() { document.getElementById('deploy-modal').classList.remove('active'); }
+
+        function copyCurrentCode() {
+            // This copies the current HTML content to clipboard
+            const code = document.documentElement.outerHTML;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = code;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            
+            const msg = document.getElementById('copy-msg');
+            msg.style.opacity = '1';
+            setTimeout(() => msg.style.opacity = '0', 2000);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
