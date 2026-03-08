@@ -13,12 +13,15 @@
             position: relative;
             width: 100%;
             max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
+            margin: auto;
+            height: 300px;
         }
-        .day-card { transition: all 0.2s ease-in-out; }
-        .day-card:hover { transform: translateY(-2px); }
+        .day-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            cursor: pointer; 
+        }
+        .day-card:hover { transform: translateX(6px); border-color: #0d9488; }
+        .day-card.selected { border-color: #0d9488; background-color: #f0fdfa; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .active-tab {
             background-color: #0d9488 !important;
             color: white !important;
@@ -31,12 +34,10 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800 antialiased">
+<body class="bg-stone-50 text-stone-800 antialiased selection:bg-teal-100">
 
-<!-- Chosen Palette: Warm Neutrals with Deep Teal and Soft Slate -->
-<!-- Application Structure Plan: Fixed the filtering bug by ensuring renderDayList re-syncs with the first visible item and correcting phase string matches. The UI remains a dashboard with interactive phase filtering. -->
-<!-- Visualization & Content Choices: 1. Phase Tabs -> Fix bug -> Auto-select first item after filter -> Vanilla JS. 2. Data Consistency -> Uniform phase keys -> found, crea, auto. 3. Growth Chart -> Line Chart -> Tracks 16-day progress. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!-- Chosen Palette: Warm Neutrals with Professional Teal -->
+<!-- Application Structure Plan: Horizontal split cards. Left: Core Course Info. Right: Interactive Memo. The curriculum now features a strict 'Theory + Practice' dual-structure for every single day. Specialized practical examples are highlighted in the 'Foundation' and 'Creation' phases. -->
 
     <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,7 +46,7 @@
                     <span class="mr-2">🚀</span> AI 16-Day Roadmap
                 </div>
                 <div class="text-sm font-medium text-stone-500">
-                    32 Hours Total (2h × 16d)
+                    Total: 32 Hours (2h × 16 sessions)
                 </div>
             </div>
         </div>
@@ -53,69 +54,51 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <section class="mb-12">
-            <div class="bg-white rounded-3xl p-8 shadow-sm border border-stone-100 flex flex-col md:flex-row gap-8 items-center">
-                <div class="flex-grow">
-                    <h1 class="text-3xl font-bold text-stone-900 mb-4 tracking-tight">AI 실무 마스터: 16일의 여정</h1>
-                    <p class="text-stone-600 leading-relaxed mb-6">
-                        기존 8일 과정을 2배로 확장하여 AI 실무의 모든 영역을 깊이 있게 다룹니다. 필터 메뉴를 사용하여 원하는 주차의 학습 내용을 탐색해 보세요.
-                    </p>
-                    <div class="flex gap-2">
-                        <span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-bold">#커리큘럼</span>
-                        <span class="px-3 py-1 bg-stone-100 text-stone-600 rounded-full text-xs font-bold">#실무활용</span>
-                    </div>
-                </div>
+        <header class="mb-10 fade-in">
+            <div class="bg-gradient-to-br from-teal-900 to-teal-700 rounded-3xl p-8 md:p-12 shadow-xl text-white">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4 tracking-tight text-center md:text-left">실무 중심 AI 마스터 커리큘럼</h1>
+                <p class="text-teal-50 leading-relaxed text-lg opacity-90 text-center md:text-left">
+                    이론으로 원리를 이해하고, 실습으로 결과를 만듭니다. <br class="hidden md:block">
+                    각 단계별 **실무 적용 프로젝트**를 통해 본인만의 AI 워크플로우를 완성하세요.
+                </p>
             </div>
-        </section>
+        </header>
 
         <section class="mb-16">
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Sidebar Navigation -->
-                <div class="lg:w-1/3">
-                    <div class="mb-6 flex space-x-2">
-                        <button onclick="filterPhase('all')" id="btn-all" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50 active-tab">전체</button>
-                        <button onclick="filterPhase('found')" id="btn-found" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">기초</button>
-                        <button onclick="filterPhase('crea')" id="btn-crea" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">창작</button>
-                        <button onclick="filterPhase('auto')" id="btn-auto" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">자동화</button>
+            <div class="flex flex-col xl:flex-row gap-8">
+                <!-- Sidebar: Horizontal Cards -->
+                <div class="xl:w-3/5">
+                    <div class="mb-6 flex space-x-2 bg-white p-1 rounded-2xl shadow-sm border border-stone-200">
+                        <button onclick="filterPhase('all')" id="btn-all" class="phase-btn flex-1 py-2 text-xs font-bold rounded-xl transition-all active-tab">전체</button>
+                        <button onclick="filterPhase('found')" id="btn-found" class="phase-btn flex-1 py-2 text-xs font-bold rounded-xl transition-all">기초</button>
+                        <button onclick="filterPhase('crea')" id="btn-crea" class="phase-btn flex-1 py-2 text-xs font-bold rounded-xl transition-all">창작</button>
+                        <button onclick="filterPhase('auto')" id="btn-auto" class="phase-btn flex-1 py-2 text-xs font-bold rounded-xl transition-all">자동화/심화</button>
                     </div>
-                    <div class="h-[600px] overflow-y-auto custom-scrollbar pr-2 space-y-2" id="day-list">
-                        <!-- Days injected by JS -->
+                    <div class="h-[750px] overflow-y-auto custom-scrollbar pr-3 space-y-4" id="day-list">
+                        <!-- Injected by JS -->
                     </div>
                 </div>
 
-                <!-- Detail View -->
-                <div class="lg:w-2/3">
-                    <div id="detail-panel" class="bg-white rounded-3xl shadow-xl border border-stone-200 overflow-hidden h-full flex flex-col fade-in">
+                <!-- Right Detail Panel -->
+                <div class="xl:w-2/5">
+                    <div id="detail-panel" class="bg-white rounded-3xl shadow-xl border border-stone-200 overflow-hidden sticky top-24 flex flex-col fade-in">
                         <div id="detail-header" class="bg-stone-900 p-8 text-white">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <span id="detail-tag" class="inline-block bg-teal-600 text-[10px] font-bold px-2 py-0.5 rounded mb-3 tracking-widest uppercase">Phase</span>
-                                    <h2 id="detail-title" class="text-2xl font-bold">강의를 선택해 주세요</h2>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-stone-400 text-xs font-bold">시간</p>
-                                    <p class="text-lg font-bold">120분</p>
-                                </div>
-                            </div>
+                            <span id="detail-tag" class="inline-block bg-teal-600 text-[10px] font-bold px-2 py-0.5 rounded mb-3 tracking-widest uppercase">Phase</span>
+                            <h2 id="detail-title" class="text-2xl font-bold leading-tight">강의를 선택하세요</h2>
                         </div>
                         <div class="p-8 md:p-10 flex-grow">
                             <div class="mb-8">
-                                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">학습 목표</h4>
-                                <p id="detail-objective" class="text-stone-800 text-lg font-medium leading-relaxed italic">리스트에서 강의를 선택하시면 상세 학습 목표가 표시됩니다.</p>
+                                <h4 class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">Core Objective</h4>
+                                <p id="detail-objective" class="text-stone-800 text-lg font-medium leading-relaxed"></p>
                             </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-8">
                                 <div>
-                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">교육 구성</h4>
-                                    <ul id="detail-items" class="space-y-3 text-sm text-stone-600"></ul>
+                                    <h4 class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-4">Training Structure</h4>
+                                    <ul id="detail-items" class="space-y-4"></ul>
                                 </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">키워드</h4>
-                                    <div id="detail-keywords" class="flex flex-wrap gap-2"></div>
-                                    <div class="mt-8 p-6 bg-stone-50 rounded-2xl border border-stone-100">
-                                        <h5 class="text-xs font-bold text-stone-500 mb-2">💡 코치의 조언</h5>
-                                        <p id="coach-tip" class="text-sm text-stone-600 italic">선택된 강의에 대한 실무 팁이 여기에 표시됩니다.</p>
-                                    </div>
+                                <div class="p-6 bg-teal-50 rounded-2xl border border-teal-100 border-dashed">
+                                    <h5 class="text-[10px] font-bold text-teal-700 mb-2 uppercase tracking-wide">Coach's Practical Tip</h5>
+                                    <p id="coach-tip" class="text-sm text-teal-800 italic leading-relaxed"></p>
                                 </div>
                             </div>
                         </div>
@@ -124,10 +107,10 @@
             </div>
         </section>
 
-        <!-- Visual Skill Analytics -->
+        <!-- Skill Growth Section -->
         <section class="mb-16">
             <h3 class="text-xl font-bold text-stone-900 mb-8 flex items-center">
-                <span class="w-8 h-8 bg-teal-700 text-white rounded-full flex items-center justify-center text-sm mr-3">📈</span> 역량 성장 시뮬레이션
+                <span class="w-8 h-8 bg-teal-700 text-white rounded-full flex items-center justify-center text-sm mr-3">📈</span> 역량 성장 지표
             </h3>
             <div class="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm">
                 <div class="chart-container">
@@ -135,89 +118,203 @@
                 </div>
             </div>
         </section>
-
     </main>
 
     <footer class="bg-stone-900 text-stone-500 py-12 text-center text-sm">
-        <p>&copy; 2026 AI Curriculum Master Program.</p>
+        <p>&copy; 2026 AI Curriculum Master Program. Focused on Practical Results.</p>
     </footer>
 
     <script>
         const curriculum = [
-            { day: 1, phase: 'found', tag: 'Foundation', title: "생성형 AI의 이해와 업무 패러다임", objective: "생성형 AI의 기술적 배경을 이해하고 AI와 협업하는 마인드셋을 확립한다.", items: ["AI 트렌드와 산업별 변화", "LLM의 작동 원리 이해", "기초 대화 세팅"], keywords: ["Generative AI", "LLM"], tip: "AI를 단순한 도구가 아닌 똑똑한 비서로 대우해 보세요." },
-            { day: 2, phase: 'found', tag: 'Foundation', title: "프롬프트 엔지니어링 1: 구조화 기술", objective: "원하는 결과를 즉시 얻기 위한 구조적 프롬프트 작성 공식을 마스터한다.", items: ["역할 부여와 배경 설정", "제약 조건 및 출력 형식 지정", "Zero-shot vs Few-shot 실습"], keywords: ["Prompting", "RTF Framework"], tip: "질문이 구체적일수록 AI의 답변 수준이 올라갑니다." },
-            { day: 3, phase: 'found', tag: 'Foundation', title: "프롬프트 엔지니어링 2: 논리적 추론", objective: "AI가 단계별로 생각하게 하여 복잡한 문제 해결 능력을 향상시킨다.", items: ["Chain-of-Thought 기법", "Self-Consistency 추론", "복합 업무 논리 설계"], keywords: ["Logic", "Reasoning"], tip: "'단계별로 생각해보자'라는 문장을 활용해 보세요." },
-            { day: 4, phase: 'found', tag: 'Foundation', title: "텍스트 AI 심화: 문서 요약 및 기획", objective: "방대한 자료를 분석하고 실무 기획안으로 변환하는 능력을 기른다.", items: ["롱폼 문서 분석 및 요약", "비즈니스 기획서 초안 작성", "어조 및 매너 변환"], keywords: ["Summarization", "Planning"], tip: "AI는 당신의 생각을 정리해주는 최고의 초안 작성자입니다." },
-            { day: 5, phase: 'crea', tag: 'Creation', title: "이미지 생성 AI 기초: DALL-E & Midjourney", objective: "텍스트 프롬프트를 시각적 결과물로 변환하는 이미지 생성 기술을 습득한다.", items: ["DALL-E 3 사용법", "이미지 스타일 및 구도 제어", "상업적 이용 가이드라인"], keywords: ["Visual AI", "DALL-E"], tip: "눈으로 보는 이미지를 말로 상세히 묘사해 보세요." },
-            { day: 6, phase: 'crea', tag: 'Creation', title: "이미지 생성 심화: 브랜드 디자인 활용", objective: "로고, UI 디자인, 마케팅 에셋을 일관성 있게 생성하는 기법을 배운다.", items: ["일관성 있는 캐릭터 생성", "로고 및 UI 레이아웃 추출", "이미지 편집 및 확장"], keywords: ["Design", "Branding"], tip: "디자인 시안을 잡을 때 AI를 활용하면 시간이 10배 단축됩니다." },
-            { day: 7, phase: 'crea', tag: 'Creation', title: "영상 및 음성 AI: 멀티모달 확장", objective: "텍스트에서 영상과 음성을 생성하여 콘텐츠 제작 범위를 확장한다.", items: ["Runway 영상 생성 실습", "AI 보이스 생성 및 클로닝", "Suno AI 배경음악 제작"], keywords: ["Video AI", "Voice"], tip: "이제 혼자서도 짧은 광고 영상을 충분히 만들 수 있습니다." },
-            { day: 8, phase: 'crea', tag: 'Creation', title: "AI 기반 프레젠테이션 자동화", objective: "아이디어만으로 발표 자료를 자동 구성하고 디자인하는 워크플로우를 완성한다.", items: ["Gamma 슬라이드 자동 생성", "시각적 발표 자료 고도화", "스피치 대본 자동 생성"], keywords: ["Presentation", "Gamma"], tip: "내용 기획에 집중하고 디자인은 AI에게 맡기세요." },
-            { day: 9, phase: 'auto', tag: 'Automation', title: "데이터 분석 AI 기초: ChatGPT ADA", objective: "복잡한 엑셀 데이터를 AI에게 맡겨 통계 분석 및 시각화를 수행한다.", items: ["데이터 전처리 자동화", "통계 분석 및 상관관계 도출", "데이터 차트 자동 생성"], keywords: ["Data Analysis", "ADA"], tip: "데이터를 업로드하고 질문만 던지면 분석이 시작됩니다." },
-            { day: 10, phase: 'auto', tag: 'Automation', title: "엑셀/스프레드시트 AI 연동", objective: "함수와 스크립트 없이 AI 확장 기능을 통해 대량의 데이터를 처리한다.", items: ["GPT for Sheets 연동", "대량 데이터 분류 및 번역", "복잡한 수식 생성 실습"], keywords: ["Excel AI", "Spreadsheet"], tip: "반복적인 엑셀 노가다에서 해방될 시간입니다." },
-            { day: 11, phase: 'auto', tag: 'Automation', title: "노코드 업무 자동화: Zapier + AI", objective: "서로 다른 앱을 AI로 연결하여 업무 프로세스를 자동화한다.", items: ["Zapier 연동 기초", "이메일 자동 요약 알림 구축", "자동 캘린더 관리 시스템"], keywords: ["No-code", "Zapier"], tip: "잠자는 동안에도 AI는 당신의 워크플로우를 처리합니다." },
-            { day: 12, phase: 'auto', tag: 'Automation', title: "AI 비서 구축: 일정 및 커뮤니케이션", objective: "개인 비서 역할을 하는 AI 시스템을 설계하여 생산성을 극대화한다.", items: ["정보 통합 요약 시스템", "트렌드 리포트 자동 생성", "회의록 자동 추출 및 To-do 생성"], keywords: ["AI Assistant", "Productivity"], tip: "정보 과잉 시대, AI로 핵심만 요약해서 관리하세요." },
-            { day: 13, phase: 'auto', tag: 'Advanced', title: "나만의 맞춤형 GPTs 설계", objective: "특정 업무 지식을 학습시킨 전용 챗봇 에이전트를 만든다.", items: ["Custom GPTs 구성 요소 이해", "지식 베이스 최적화 기법", "에이전트 행동 지침 설정"], keywords: ["Custom GPTs", "Agent"], tip: "당신의 업무 노하우를 AI 봇에 그대로 녹여내세요." },
-            { day: 14, phase: 'auto', tag: 'Advanced', title: "직무별 AI 활용 시나리오 완성", objective: "마케팅, 인사, 재무 등 직무별 최적화된 활용 시나리오를 완성한다.", items: ["페르소나 기반 전략 수립", "채용 및 교육 커리큘럼 설계", "비용 분석 및 개선 제안"], keywords: ["Strategy", "Scenario"], tip: "우리 팀만의 AI 활용 가이드라인을 만들어 보세요." },
-            { day: 15, phase: 'auto', tag: 'Advanced', title: "AI 윤리, 보안 및 미래 전략", objective: "안전하게 AI를 사용하기 위한 보안 수칙과 기술 변화 흐름을 이해한다.", items: ["기업 데이터 보안 가이드", "환각 현상 대응 전략", "미래 AI 기술 전망"], keywords: ["Security", "Ethics"], tip: "기술을 잘 쓰는 것만큼 보안을 지키는 것도 중요합니다." },
-            { day: 16, phase: 'auto', tag: 'Final', title: "종합 프로젝트: AI 워크플로우 발표", objective: "16일간 배운 내용을 종합하여 본인의 업무 개선 결과를 공유한다.", items: ["최종 워크플로우 시연", "동료 피드백 및 코칭", "개인별 학습 로드맵 수료"], keywords: ["Final Project", "Showcase"], tip: "오늘의 수료가 새로운 AI 커리어의 시작입니다." }
+            { 
+                day: 1, phase: 'found', tag: 'Foundation', 
+                title: "생성형 AI의 원리와 업무 패러다임", 
+                objective: "LLM의 작동 원리를 이해하고 AI와 협업하는 기초 체력을 기른다.", 
+                items: [
+                    "이론: LLM의 확률론적 생성 원리와 '토큰' 개념 이해 (60분)",
+                    "실습: 직무 분석을 통한 'AI 자동화 가능 리스트' 작성해보기 (60분)"
+                ], 
+                tip: "AI는 정답을 맞추는 계산기가 아니라, 가장 확률이 높은 다음 단어를 맞추는 '언어 천재'입니다.", memo: "" 
+            },
+            { 
+                day: 2, phase: 'found', tag: 'Foundation', 
+                title: "프롬프트 엔진: 구조화와 맥락 설정", 
+                objective: "RTF 공식을 활용해 AI로부터 100% 만족스러운 결과물을 얻는다.", 
+                items: [
+                    "이론: RTF(Role-Task-Format) 및 Context 주입 기법 (50분)",
+                    "실습: [예시] 고객 불만 이메일에 대한 다국어 자동 응답 프롬프트 제작 (70분)"
+                ], 
+                tip: "배경 상황(Context)을 소설처럼 자세히 적을수록 AI는 당신의 의도를 정확히 파악합니다.", memo: "" 
+            },
+            { 
+                day: 3, phase: 'found', tag: 'Foundation', 
+                title: "논리적 추론 프롬프팅: 단계별 사고 유도", 
+                objective: "Chain-of-Thought 기법을 적용하여 복잡한 비즈니스 문제를 해결한다.", 
+                items: [
+                    "이론: CoT(단계별 생각) 및 Few-shot 러닝의 기술 (50분)",
+                    "실습: [예시] 신규 사업 런칭을 위한 SWOT 분석 및 단계별 실행 로드맵 도출 (70분)"
+                ], 
+                tip: "'단계별로 생각해보자'라는 한 마디가 AI의 추론 능력을 300% 이상 향상시킵니다.", memo: "" 
+            },
+            { 
+                day: 4, phase: 'found', tag: 'Foundation', 
+                title: "텍스트 AI 심화: 문서 요약 및 기획", 
+                objective: "방대한 텍스트 데이터를 분석하여 실무용 기획서 초안을 완성한다.", 
+                items: [
+                    "이론: 롱폼 문서 분석 및 페르소나 기반 작법 (50분)",
+                    "실습: [예시] 경쟁사 보도자료 10개를 분석하여 우리 회사만의 차별화 마케팅 기획서 작성 (70분)"
+                ], 
+                tip: "AI에게 '비판적 검토자' 역할을 맡겨 작성된 초안의 약점을 먼저 찾아내게 하세요.", memo: "" 
+            },
+            { 
+                day: 5, phase: 'crea', tag: 'Creation', 
+                title: "이미지 생성 AI: 비주얼 프롬프팅 기초", 
+                objective: "텍스트를 고품질 이미지 에셋으로 변환하는 창작 능력을 확보한다.", 
+                items: [
+                    "이론: Midjourney 및 DALL-E 3의 시각적 파라미터 제어 (50분)",
+                    "실습: [예시] 우리 팀 블로그 포스팅을 위한 일관된 스타일의 '브랜드 아이콘' 5종 생성 (70분)"
+                ], 
+                tip: "이미지의 구도, 조명, 렌즈 종류를 명시하면 훨씬 전문적인 결과가 나옵니다.", memo: "" 
+            },
+            { 
+                day: 6, phase: 'crea', tag: 'Creation', 
+                title: "이미지 심화: 브랜드 및 UI/UX 디자인", 
+                objective: "로고, 웹 레이아웃 등 실질적인 디자인 시안을 AI로 제작한다.", 
+                items: [
+                    "이론: 일관성 유지(Seed 활용) 및 이미지 편집 기법 (50분)",
+                    "실습: [예시] 스타트업 랜딩 페이지의 메인 UI 레이아웃 및 홍보 배너 세트 제작 (70분)"
+                ], 
+                tip: "Midjourney의 '--cref' 기능을 활용해 동일한 캐릭터를 여러 구도로 만들어보세요.", memo: "" 
+            },
+            { 
+                day: 7, phase: 'crea', tag: 'Creation', 
+                title: "멀티모달 확장: AI 영상 및 음성 생성", 
+                objective: "동영상 및 오디오 AI를 결합하여 숏폼 콘텐츠를 제작한다.", 
+                items: [
+                    "이론: Runway(영상), ElevenLabs(음성) 툴체인 이해 (40분)",
+                    "실습: [예시] AI 보이스와 이미지를 결합한 '1분 서비스 소개 영상' 제작 (80분)"
+                ], 
+                tip: "음성은 감정 톤을, 영상은 모션 강도를 조절하는 것이 퀄리티의 핵심입니다.", memo: "" 
+            },
+            { 
+                day: 8, phase: 'crea', tag: 'Creation', 
+                title: "AI 기반 프레젠테이션 자동화", 
+                objective: "아이디어 기획부터 슬라이드 디자인까지 전체 과정을 AI로 단축한다.", 
+                items: [
+                    "이론: Gamma 및 Beautiful.ai를 활용한 시각적 스토리텔링 (40분)",
+                    "실습: [예시] 투자 유치를 위한 '10페이지 분량의 사업 계획서 IR 피치덱' 자동 생성 및 수정 (80분)"
+                ], 
+                tip: "디자인에 시간을 뺏기지 마세요. AI가 구조를 잡으면 당신은 '전략'에만 집중하면 됩니다.", memo: "" 
+            },
+            { 
+                day: 9, phase: 'auto', tag: 'Automation', 
+                title: "데이터 분석 AI: ChatGPT ADA 활용", 
+                objective: "데이터 전처리부터 고급 통계 분석까지 AI를 데이터 분석가로 활용한다.", 
+                items: [
+                    "이론: Code Interpreter 환경 및 정형 데이터 처리 (50분)",
+                    "실습: 엑셀 매출 데이터를 업로드하여 '분기별 성장 원인' 분석 및 차트 자동 생성 (70분)"
+                ], 
+                tip: "데이터의 오류까지도 AI에게 찾아내라고 시키세요. 훌륭한 검수자 역할도 수행합니다.", memo: "" 
+            },
+            { 
+                day: 10, phase: 'auto', tag: 'Automation', 
+                title: "워크플로우 자동화: GPT for Sheets", 
+                objective: "함수 없이 스프레드시트 내에서 대량의 데이터를 AI로 처리한다.", 
+                items: [
+                    "이론: API 연동 및 시트 내 함수 사용법 (40분)",
+                    "실습: 100건의 고객 문의 데이터를 '감성 분석'하고 '카테고리별'로 자동 분류하기 (80분)"
+                ], 
+                tip: "반복적인 노가다 업무는 이제 스프레드시트 함수 하나로 끝낼 수 있습니다.", memo: "" 
+            },
+            { day: 11, phase: 'auto', tag: 'Automation', title: "노코드 업무 자동화: Zapier + AI", objective: "서로 다른 앱을 연결하여 24시간 작동하는 자동 업무 비서를 만든다.", items: ["이론: Zapier 트리거 및 액션의 원리 (40분)", "실습: 이메일 수신 시 AI 요약 후 슬랙(Slack)으로 자동 전송하는 워크플로우 구축 (80분)"], tip: "시스템이 대신 일하게 하세요. 당신은 결정만 하면 됩니다.", memo: "" },
+            { day: 12, phase: 'auto', tag: 'Automation', title: "AI 비서 시스템 구축: 일정 및 요약", objective: "개인 생산성을 극대화하는 맞춤형 AI 대시보드를 설계한다.", items: ["이론: 정보 통합 및 회의록 추출 프로세스 (40분)", "실습: 회의 음성 파일을 텍스트로 변환 후 '액션 플랜'만 요약해주는 시스템 만들기 (80분)"], tip: "정보 과잉의 시대, AI로 핵심 정보만 선별해서 받으세요.", memo: "" },
+            { day: 13, phase: 'auto', tag: 'Advanced', title: "Custom GPTs 설계 및 지식 학습", objective: "나만의 전문 지식을 학습시킨 고유의 AI 에이전트를 만든다.", items: ["이론: Knowledge Base 최적화 및 Instruction 설계 (50분)", "실습: 우리 회사 규정집을 학습시킨 '인사팀 전용 Q&A 챗봇' 제작 (70분)"], tip: "당신의 업무 노하우를 AI에게 전수하는 과정입니다.", memo: "" },
+            { day: 14, phase: 'auto', tag: 'Advanced', title: "직무별 AI 에이전트 시나리오 완성", objective: "특정 직무에 최적화된 복합 AI 시나리오를 완성한다.", items: ["이론: 페르소나 최적화 및 멀티 에이전트 협업 구상 (40분)", "실습: 기획-디자인-분석이 연동되는 '1인 마케팅 에이전시' 시스템 구상 (80분)"], tip: "이제 직원은 사람이 아니라 AI 에이전트들의 집합체가 될 수 있습니다.", memo: "" },
+            { day: 15, phase: 'auto', tag: 'Advanced', title: "AI 보안, 윤리 및 미래 커리어 전략", objective: "안전하게 AI를 사용하며 미래 기술 변화에 대응하는 역량을 갖춘다.", items: ["이론: 기업 데이터 유출 방지 대책 및 보안 가이드 (60분)", "실습: 개인별 'AI 역량 로드맵' 및 향후 1년 학습 계획 수립 (60분)"], tip: "기술은 도구일 뿐입니다. 그 기술을 다루는 사람의 '윤리'와 '철학'이 가치를 결정합니다.", memo: "" },
+            { day: 16, phase: 'auto', tag: 'Final', title: "종합 프로젝트: 나의 AI 워크플로우 발표", objective: "전 과정을 통해 완성한 본인만의 AI 실무 개선 결과물을 공유한다.", items: ["실습: 8주간의 결과물 종합 및 1인 프로젝트 최종 고도화 (60분)", "발표: 동료 간 워크플로우 시연 및 최종 피드백 (60분)"], tip: "수료는 끝이 아닙니다. 오늘 만든 시스템이 당신의 연봉과 가치를 바꿀 것입니다.", memo: "" }
         ];
 
-        let currentFilteredDays = [];
+        let currentFilter = 'all';
+        let currentDayId = 1;
 
         function init() {
-            filterPhase('all');
+            renderDayList();
+            selectDay(1);
             initChart();
         }
 
-        function renderDayList(phaseFilter) {
+        function filterPhase(phase) {
+            currentFilter = phase;
+            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(`btn-${phase}`).classList.add('active-tab');
+            renderDayList();
+        }
+
+        function renderDayList() {
             const list = document.getElementById('day-list');
             list.innerHTML = '';
             
-            // 필터링된 데이터 추출
-            currentFilteredDays = curriculum.filter(item => 
-                phaseFilter === 'all' || item.phase === phaseFilter
+            const filtered = curriculum.filter(item => 
+                currentFilter === 'all' || item.phase === currentFilter
             );
 
-            currentFilteredDays.forEach(item => {
-                const card = document.createElement('button');
-                card.id = `day-btn-${item.day}`;
-                card.onclick = () => selectDay(item.day);
-                card.className = "day-card w-full text-left p-4 rounded-2xl bg-white border border-stone-200 flex items-center group hover:border-teal-400";
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `card-${item.day}`;
+                card.className = `day-card w-full rounded-3xl bg-white border border-stone-200 flex flex-col md:flex-row shadow-sm overflow-hidden fade-in ${currentDayId === item.day ? 'selected' : ''}`;
+                
+                card.onclick = (e) => {
+                    if(['BUTTON', 'TEXTAREA'].includes(e.target.tagName)) return;
+                    selectDay(item.day);
+                };
+
+                const memoHtml = item.memo 
+                    ? `<div class="bg-teal-50/50 p-3 rounded-xl border border-teal-100 italic text-[11px] text-teal-700 line-clamp-2">"${item.memo}"</div>`
+                    : `<div class="text-[10px] text-stone-300 italic">기록된 메모가 없습니다.</div>`;
+
                 card.innerHTML = `
-                    <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center font-bold text-stone-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
-                        ${item.day}
+                    <div class="p-5 md:w-3/5 border-b md:border-b-0 md:border-r border-stone-100 flex items-start">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center font-bold text-stone-400 mr-4">
+                            ${item.day}
+                        </div>
+                        <div class="flex-grow">
+                            <span class="text-[9px] font-bold text-teal-600 uppercase tracking-widest block mb-1">${item.tag}</span>
+                            <h3 class="text-sm font-bold text-stone-800 leading-tight">${item.title}</h3>
+                        </div>
                     </div>
-                    <div class="ml-4 flex-grow">
-                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">${item.tag}</p>
-                        <p class="text-sm font-semibold text-stone-800 line-clamp-1">${item.title}</p>
+                    <div class="p-5 md:w-2/5 bg-stone-50/20 flex flex-col justify-between">
+                        <div id="memo-display-${item.day}">
+                            ${memoHtml}
+                        </div>
+                        <div id="memo-input-box-${item.day}" class="hidden">
+                            <textarea id="memo-textarea-${item.day}" class="w-full text-xs p-2 border border-teal-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 mb-2" rows="2">${item.memo}</textarea>
+                            <button onclick="saveMemo(${item.day})" class="w-full bg-teal-700 text-white text-[10px] py-1.5 rounded-lg font-bold">저장</button>
+                        </div>
+                        <div class="flex justify-end mt-2" id="memo-actions-${item.day}">
+                            <button onclick="toggleEdit(${item.day}, true)" class="text-[10px] font-bold text-teal-700 bg-white border border-teal-100 px-3 py-1 rounded-full hover:bg-teal-50">
+                                ${item.memo ? '수정' : '메모'}
+                            </button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(card);
             });
 
-            // 필터링 후 첫 번째 아이템 자동 선택 (버그 해결 핵심)
-            if (currentFilteredDays.length > 0) {
-                selectDay(currentFilteredDays[0].day);
-            }
+            if (filtered.length > 0) selectDay(currentDayId);
         }
 
         function selectDay(dayId) {
-            // 모든 카드 스타일 초기화
-            document.querySelectorAll('.day-card').forEach(c => {
-                c.classList.remove('border-teal-500', 'bg-teal-50/30', 'ring-1', 'ring-teal-500');
-            });
-            
-            const activeCard = document.getElementById(`day-btn-${dayId}`);
-            if (activeCard) {
-                activeCard.classList.add('border-teal-500', 'bg-teal-50/30', 'ring-1', 'ring-teal-500');
-            }
+            currentDayId = dayId;
+            document.querySelectorAll('.day-card').forEach(c => c.classList.remove('selected'));
+            const activeCard = document.getElementById(`card-${dayId}`);
+            if (activeCard) activeCard.classList.add('selected');
 
             const data = curriculum.find(d => d.day === dayId);
             if (!data) return;
 
             const panel = document.getElementById('detail-panel');
             panel.classList.remove('fade-in');
-            void panel.offsetWidth; // 리플로우 강제
+            void panel.offsetWidth;
             panel.classList.add('fade-in');
 
             document.getElementById('detail-tag').innerText = data.tag;
@@ -229,29 +326,26 @@
             list.innerHTML = '';
             data.items.forEach(it => {
                 const li = document.createElement('li');
-                li.className = 'flex items-start';
-                li.innerHTML = `<span class="text-teal-500 mr-2">✔</span> <span>${it}</span>`;
+                li.className = 'flex items-start text-sm text-stone-600';
+                li.innerHTML = `<span class="text-teal-500 mr-3 mt-1.5 w-1.5 h-1.5 rounded-full bg-teal-500 flex-shrink-0"></span> <span>${it}</span>`;
                 list.appendChild(li);
-            });
-
-            const kw = document.getElementById('detail-keywords');
-            kw.innerHTML = '';
-            data.keywords.forEach(k => {
-                const s = document.createElement('span');
-                s.className = 'bg-stone-100 text-stone-500 text-[10px] font-bold px-3 py-1.5 rounded-full border border-stone-200';
-                s.innerText = k;
-                kw.appendChild(s);
             });
         }
 
-        function filterPhase(phase) {
-            // 버튼 스타일 업데이트
-            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active-tab'));
-            const activeBtn = document.getElementById(`btn-${phase}`);
-            if (activeBtn) activeBtn.classList.add('active-tab');
-            
-            // 리스트 렌더링 호출
-            renderDayList(phase);
+        function toggleEdit(dayId, show) {
+            document.getElementById(`memo-display-${dayId}`).classList.toggle('hidden', show);
+            document.getElementById(`memo-input-box-${dayId}`).classList.toggle('hidden', !show);
+            document.getElementById(`memo-actions-${dayId}`).classList.toggle('hidden', show);
+            if(show) document.getElementById(`memo-textarea-${dayId}`).focus();
+        }
+
+        function saveMemo(dayId) {
+            const val = document.getElementById(`memo-textarea-${dayId}`).value;
+            const index = curriculum.findIndex(d => d.day === dayId);
+            if (index !== -1) {
+                curriculum[index].memo = val;
+                renderDayList();
+            }
         }
 
         function initChart() {
@@ -259,17 +353,18 @@
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: curriculum.map(d => `Day ${d.day}`),
-                    datasets: [
-                        {
-                            label: '종합 AI 역량',
-                            data: [10, 25, 40, 55, 60, 70, 80, 85, 90, 92, 94, 96, 98, 99, 100, 100],
-                            borderColor: '#0d9488',
-                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                            fill: true,
-                            tension: 0.4
-                        }
-                    ]
+                    labels: curriculum.map(d => `${d.day}일`),
+                    datasets: [{
+                        label: '종합 AI 역량 성장',
+                        data: [15, 30, 42, 55, 62, 72, 80, 85, 90, 92, 94, 96, 97, 98, 99, 100],
+                        borderColor: '#0d9488',
+                        backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#0d9488',
+                        pointBorderColor: '#fff'
+                    }]
                 },
                 options: {
                     responsive: true,
@@ -277,7 +372,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { display: false, min: 0 },
-                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        x: { grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' }, color: '#a8a29e' } }
                     }
                 }
             });
