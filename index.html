@@ -3,50 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 활용 8주 마스터 커리큘럼</title>
+    <title>AI 실무 활용 16일 마스터 커리큘럼</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans KR'a, sans-serif; }
+        body { font-family: 'Noto Sans KR', sans-serif; }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
             height: 350px;
-            max-height: 400px;
         }
-        @media (min-width: 768px) {
-            .chart-container { height: 400px; }
-        }
-        .tab-btn.active {
-            background-color: #0f766e;
+        .day-card { transition: all 0.2s ease-in-out; }
+        .day-card:hover { transform: translateY(-2px); }
+        .active-tab {
+            background-color: #0d9488;
             color: white;
-            border-color: #0f766e;
+            border-color: #0d9488;
         }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800 antialiased selection:bg-teal-200 selection:text-teal-900">
+<body class="bg-stone-50 text-stone-800 antialiased">
 
-<!-- Chosen Palette: Warm Neutrals with Teal Accent (bg-stone-50, text-stone-800, accent-teal-700) -->
-<!-- Application Structure Plan: Dashboard-style single page application. Designed with a top summary to give immediate context, followed by an interactive 'Curriculum Explorer' allowing users to click through each of the 8 days to dynamically load details without overwhelming them with text. A visual analytics section provides quantitative insights into time allocation and skill acquisition to validate the curriculum's effectiveness. This structure transforms a static table into an engaging discovery process. -->
-<!-- Visualization & Content Choices: 1. Overview Metrics -> Inform -> Dynamic Stats Cards -> Immediate grasp of scope -> HTML/CSS. 2. Curriculum Details -> Organize/Inform -> Interactive Buttons & Dynamic Text Panel -> Prevents information overload, encourages exploration -> Vanilla JS DOM manipulation. 3. Time Allocation -> Compare -> Doughnut Chart -> Visualizes practical focus -> Chart.js. 4. Skill Progression -> Change/Compare -> Radar Chart -> Shows holistic growth over 2 months -> Chart.js. -->
+<!-- Chosen Palette: Warm Neutrals with Deep Teal and Soft Slate -->
+<!-- Application Structure Plan: A 16-day interactive roadmap. Since 16 days is a lot of information, I've used a 'Phase' based categorization (Foundation, Creation, Analytics, Advanced) to group the days. Users can click each day to see details. A 'Skill Matrix' chart shows how the user progresses across different AI domains over the 16 sessions. -->
+<!-- Visualization & Content Choices: 1. Phase Tabs -> Organize -> Filtered views -> JS filtering. 2. Day Details -> Inform -> Dynamic content panel -> DOM updates. 3. Skill Growth -> Change -> Line Chart -> Visualizes competency increase over 16 days -> Chart.js. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <div class="flex-shrink-0 flex items-center font-bold text-xl tracking-tight text-teal-800">
-                    <span class="mr-2">💡</span> AI Curriculum
+                <div class="font-bold text-xl text-teal-800 flex items-center">
+                    <span class="mr-2">🚀</span> AI 16-Day Roadmap
                 </div>
-                <div class="hidden md:flex space-x-8">
-                    <button onclick="scrollToSection('overview')" class="text-stone-500 hover:text-teal-700 font-medium">개요</button>
-                    <button onclick="scrollToSection('explorer')" class="text-stone-500 hover:text-teal-700 font-medium">상세 커리큘럼</button>
-                    <button onclick="scrollToSection('analytics')" class="text-stone-500 hover:text-teal-700 font-medium">데이터 분석</button>
+                <div class="text-sm font-medium text-stone-500">
+                    Total: 32 Hours (2h × 16d)
                 </div>
             </div>
         </div>
@@ -54,73 +53,82 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <section id="overview" class="mb-16 fade-in">
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 md:p-12">
-                <div class="max-w-3xl">
-                    <h1 class="text-3xl md:text-4xl font-bold text-stone-900 mb-4 tracking-tight">AI 강의 2시간 × 8일 (2달)<br>커리큘럼 구축 연구 계획</h1>
-                    <p class="text-lg text-stone-600 mb-8 leading-relaxed">
-                        본 애플리케이션은 8주간 진행되는 실무 맞춤형 인공지능 활용 교육의 구조와 목표를 시각적으로 탐색할 수 있도록 설계되었습니다. 하단의 패널을 조작하여 각 주차별 학습 목표, 다루는 도구, 그리고 예상되는 역량 향상 지표를 직접 확인해 보십시오.
+        <!-- Summary Section -->
+        <section class="mb-12">
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-stone-100 flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-grow">
+                    <h1 class="text-3xl font-bold text-stone-900 mb-4 tracking-tight">AI 실무 마스터: 16일의 여정</h1>
+                    <p class="text-stone-600 leading-relaxed mb-6">
+                        기존 8일 과정을 2배로 확장하여, 텍스트부터 이미지, 영상, 데이터 분석, 그리고 나만의 AI 에이전트 구축까지 AI의 모든 영역을 깊이 있게 다룹니다. 각 주차별로 실무에 바로 적용 가능한 프로젝트 중심 학습이 진행됩니다.
                     </p>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-bold">#AI완전정복</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-600 rounded-full text-xs font-bold">#멀티모달</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-600 rounded-full text-xs font-bold">#업무자동화</span>
+                    </div>
                 </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                    <div class="bg-stone-50 rounded-xl p-6 border border-stone-100 flex flex-col items-center text-center">
-                        <span class="text-3xl mb-2">⏱️</span>
-                        <p class="text-sm text-stone-500 font-medium uppercase tracking-wider">총 교육 시간</p>
-                        <p class="text-2xl font-bold text-teal-700 mt-1">16 시간</p>
-                    </div>
-                    <div class="bg-stone-50 rounded-xl p-6 border border-stone-100 flex flex-col items-center text-center">
-                        <span class="text-3xl mb-2">📅</span>
-                        <p class="text-sm text-stone-500 font-medium uppercase tracking-wider">교육 기간</p>
-                        <p class="text-2xl font-bold text-teal-700 mt-1">2 개월</p>
-                    </div>
-                    <div class="bg-stone-50 rounded-xl p-6 border border-stone-100 flex flex-col items-center text-center">
-                        <span class="text-3xl mb-2">🛠️</span>
-                        <p class="text-sm text-stone-500 font-medium uppercase tracking-wider">실습 비중</p>
-                        <p class="text-2xl font-bold text-teal-700 mt-1">65 %</p>
-                    </div>
-                    <div class="bg-stone-50 rounded-xl p-6 border border-stone-100 flex flex-col items-center text-center">
-                        <span class="text-3xl mb-2">🎯</span>
-                        <p class="text-sm text-stone-500 font-medium uppercase tracking-wider">목표 달성률</p>
-                        <p class="text-2xl font-bold text-teal-700 mt-1">100 %</p>
+                <div class="w-full md:w-80 bg-stone-50 rounded-2xl p-6 border border-stone-100">
+                    <div class="text-center">
+                        <p class="text-xs text-stone-400 font-bold uppercase tracking-widest mb-2">예상 도달 역량</p>
+                        <p class="text-4xl font-bold text-teal-700">Expert</p>
+                        <div class="w-full bg-stone-200 h-2 rounded-full mt-4">
+                            <div class="bg-teal-600 h-2 rounded-full w-full"></div>
+                        </div>
+                        <p class="text-[10px] text-stone-400 mt-2">16개 모듈 전체 포함</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="explorer" class="mb-16 scroll-mt-20">
-            <h2 class="text-2xl font-bold text-stone-900 mb-6 flex items-center">
-                <span class="bg-teal-100 text-teal-800 p-2 rounded-lg mr-3 text-lg">🔍</span> 커리큘럼 탐색기
-            </h2>
-            <p class="text-stone-600 mb-8 max-w-4xl">
-                아래의 일자별 버튼을 클릭하여 전체 8일(2개월) 과정 중 특정 날짜의 세부 교육 내용, 핵심 학습 목표 및 사용되는 AI 도구를 확인하십시오. 이론과 실습의 균형 잡힌 구성을 통해 실무 적용력을 극대화합니다.
-            </p>
-
+        <!-- Interactive Curriculum Explorer -->
+        <section class="mb-16">
             <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar Navigation -->
                 <div class="lg:w-1/3">
-                    <div class="grid grid-cols-2 lg:grid-cols-1 gap-3" id="day-buttons">
+                    <div class="mb-6 flex space-x-2">
+                        <button onclick="filterPhase('all')" id="btn-all" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50 active-tab">ALL</button>
+                        <button onclick="filterPhase('found')" id="btn-found" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">기초</button>
+                        <button onclick="filterPhase('crea')" id="btn-crea" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">창작</button>
+                        <button onclick="filterPhase('auto')" id="btn-auto" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">자동화</button>
+                    </div>
+                    <div class="h-[500px] overflow-y-auto custom-scrollbar pr-2 space-y-2" id="day-list">
+                        <!-- Days injected by JS -->
                     </div>
                 </div>
-                
+
+                <!-- Detail View -->
                 <div class="lg:w-2/3">
-                    <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden h-full flex flex-col">
-                        <div class="bg-teal-700 px-6 py-4 text-white">
-                            <span id="detail-day-badge" class="inline-block bg-teal-600 text-teal-100 text-xs font-bold px-2 py-1 rounded mb-2 uppercase tracking-wide">Day 1</span>
-                            <h3 id="detail-title" class="text-xl font-bold"></h3>
+                    <div id="detail-panel" class="bg-white rounded-3xl shadow-xl border border-stone-200 overflow-hidden h-full flex flex-col fade-in">
+                        <div id="detail-header" class="bg-stone-900 p-8 text-white">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span id="detail-tag" class="inline-block bg-teal-600 text-[10px] font-bold px-2 py-0.5 rounded mb-3 tracking-widest uppercase">Phase 1</span>
+                                    <h2 id="detail-title" class="text-2xl font-bold"></h2>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-stone-400 text-xs font-bold">DURATION</p>
+                                    <p class="text-lg font-bold">120 Min</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="p-6 md:p-8 flex-grow bg-stone-50" id="detail-content">
-                            <div class="mb-6">
-                                <h4 class="text-sm font-bold text-stone-500 uppercase tracking-wider mb-2">학습 목표</h4>
-                                <p id="detail-objective" class="text-stone-800 text-lg leading-relaxed"></p>
+                        <div class="p-8 md:p-10 flex-grow">
+                            <div class="mb-8">
+                                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">학습 목표</h4>
+                                <p id="detail-objective" class="text-stone-800 text-lg font-medium leading-relaxed"></p>
                             </div>
-                            <div class="mb-6">
-                                <h4 class="text-sm font-bold text-stone-500 uppercase tracking-wider mb-2">주요 내용 (2시간)</h4>
-                                <ul id="detail-list" class="space-y-3 text-stone-700">
-                                </ul>
-                            </div>
-                            <div class="mt-auto pt-6 border-t border-stone-200">
-                                <h4 class="text-sm font-bold text-stone-500 uppercase tracking-wider mb-3">활용 도구</h4>
-                                <div id="detail-tools" class="flex flex-wrap gap-2">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">커리큘럼 구성</h4>
+                                    <ul id="detail-items" class="space-y-3"></ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">학습 키워드</h4>
+                                    <div id="detail-keywords" class="flex flex-wrap gap-2"></div>
+                                    <div class="mt-8 p-6 bg-stone-50 rounded-2xl border border-stone-100">
+                                        <h5 class="text-xs font-bold text-stone-500 mb-2">코치의 조언</h5>
+                                        <p id="coach-tip" class="text-sm text-stone-600 italic"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -129,319 +137,277 @@
             </div>
         </section>
 
-        <section id="analytics" class="mb-16 scroll-mt-20">
-            <h2 class="text-2xl font-bold text-stone-900 mb-6 flex items-center">
-                <span class="bg-teal-100 text-teal-800 p-2 rounded-lg mr-3 text-lg">📊</span> 교육 데이터 분석
-            </h2>
-            <p class="text-stone-600 mb-8 max-w-4xl">
-                해당 커리큘럼이 수강생에게 미치는 영향을 시각적 데이터로 분석합니다. 실무 중심의 교육 시간 배분과 2개월 과정을 통해 변화하는 수강생의 AI 활용 역량 예측치를 확인하세요.
-            </p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8">
-                    <h3 class="text-lg font-bold text-stone-800 mb-2 text-center">전체 시간 배분 (이론 vs 실습)</h3>
-                    <p class="text-sm text-stone-500 text-center mb-6">총 16시간 중 실무 적용에 중점을 둔 실습 비율을 보여줍니다.</p>
-                    <div class="chart-container">
-                        <canvas id="ratioChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 md:p-8">
-                    <h3 class="text-lg font-bold text-stone-800 mb-2 text-center">교육 전/후 역량 변화 예측</h3>
-                    <p class="text-sm text-stone-500 text-center mb-6">8일(2개월) 과정 수료 시 예상되는 주요 직무 역량의 향상도입니다.</p>
-                    <div class="chart-container">
-                        <canvas id="radarChart"></canvas>
-                    </div>
+        <!-- Visual Skill Analytics -->
+        <section class="mb-16">
+            <h3 class="text-xl font-bold text-stone-900 mb-8 flex items-center">
+                <span class="w-8 h-8 bg-teal-700 text-white rounded-full flex items-center justify-center text-sm mr-3">📈</span> 16일간의 역량 성장 시뮬레이션
+            </h3>
+            <div class="bg-white rounded-3xl p-8 border border-stone-100 shadow-sm">
+                <div class="chart-container">
+                    <canvas id="growthChart"></canvas>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-stone-900 text-stone-400 py-8 text-center text-sm mt-12">
-        <p>&copy; 2026 AI Curriculum Architecture Project. All rights reserved.</p>
+    <footer class="bg-stone-900 text-stone-500 py-12 text-center text-sm">
+        <p>&copy; 2026 AI Curriculum Master Program. Designed for Professional Excellence.</p>
     </footer>
 
     <script>
-        const curriculumData = [
+        const curriculum = [
             {
-                day: 1,
-                title: "AI 시대의 도래와 생성형 AI 기초",
-                objective: "생성형 AI의 기본 원리를 이해하고, 일상 및 업무에 도입하기 위한 마인드셋을 갖춘다.",
-                content: [
-                    "인공지능 트렌드 및 비즈니스 패러다임 변화 (40분)",
-                    "ChatGPT 등 대규모 언어 모델(LLM)의 원리 이해 (40분)",
-                    "기본적인 프롬프트 작성 실습 및 계정 세팅 (40분)"
-                ],
-                tools: ["ChatGPT (GPT-3.5/4)", "Claude 3"],
-                theory: 80,
-                practice: 40
+                day: 1, phase: 'found', tag: 'Foundation',
+                title: "생성형 AI의 이해와 업무 패러다임",
+                objective: "생성형 AI의 기술적 배경을 이해하고 AI와 협업하는 마인드셋을 확립한다.",
+                items: ["AI 트렌드와 산업별 변화 (40분)", "LLM의 작동 원리(토큰, 확률론적 생성) (40분)", "ChatGPT/Claude 계정 세팅 및 기초 대화 (40분)"],
+                keywords: ["Generative AI", "LLM", "Prompting Basics"],
+                tip: "AI는 '도구'가 아니라 '똑똑한 인턴'이라고 생각하고 대화를 시작해 보세요."
             },
             {
-                day: 2,
-                title: "프롬프트 엔지니어링 핵심 기법",
-                objective: "원하는 결과를 정확하게 얻어내기 위한 구조화된 프롬프트 작성 공식을 마스터한다.",
-                content: [
-                    "효과적인 프롬프트의 5가지 핵심 요소 (30분)",
-                    "역할 부여, 맥락 설정, 출력 형식 지정 기법 (40분)",
-                    "실제 업무 시나리오 기반 프롬프트 템플릿 제작 실습 (50분)"
-                ],
-                tools: ["ChatGPT", "프롬프트 템플릿 문서"],
-                theory: 40,
-                practice: 80
+                day: 2, phase: 'found', tag: 'Foundation',
+                title: "프롬프트 엔지니어링 1: 구조화 기술",
+                objective: "원하는 결과를 즉시 얻기 위한 구조적 프롬프트 작성 공식(RTF, CREATE 등)을 마스터한다.",
+                content: "기존 프롬프트의 한계를 극복하는 명확한 지시문 작성법 교육.",
+                items: ["역할 부여(Role)와 배경 설정(Context) (40분)", "제약 조건 및 출력 형식(Format) 지정 (40분)", "Zero-shot vs Few-shot 러닝 실습 (40분)"],
+                keywords: ["RTF Framework", "Context Setting", "Few-shot"],
+                tip: "질문이 구체적일수록 AI의 답변은 예술이 됩니다."
             },
             {
-                day: 3,
-                title: "텍스트 생성 AI 심화 (기획/문서화)",
-                objective: "기획서, 보고서, 이메일 등 비즈니스 문서 초안을 AI로 빠르고 논리적으로 작성한다.",
-                content: [
-                    "방대한 자료 요약 및 핵심 인사이트 도출 기법 (40분)",
-                    "비즈니스 이메일 및 블로그/SNS 포스팅 자동화 실습 (40분)",
-                    "아이디어 브레인스토밍 및 기획안 목차 구성 실습 (40분)"
-                ],
-                tools: ["Claude 3", "Notion AI", "ChatGPT"],
-                theory: 30,
-                practice: 90
+                day: 3, phase: 'found', tag: 'Foundation',
+                title: "프롬프트 엔지니어링 2: 논리적 추론",
+                objective: "AI가 단계별로 생각하게 하여 복잡한 문제 해결 능력을 향상시킨다.",
+                items: ["Chain-of-Thought(CoT) 유도 기법 (40분)", "Self-Consistency와 반성형 프롬프팅 (40분)", "복합적 업무 논리 설계 실습 (40분)"],
+                keywords: ["Chain-of-Thought", "Logic Flow", "Reasoning"],
+                tip: "AI에게 '단계별로 생각해보자'라고 말하는 것만으로 정답률이 올라갑니다."
             },
             {
-                day: 4,
-                title: "멀티모달 AI: 이미지 및 데이터 분석 기초",
-                objective: "텍스트를 넘어 이미지 생성 및 기초적인 엑셀 데이터 분석에 AI를 활용하는 방법을 익힌다.",
-                content: [
-                    "Midjourney / DALL-E 3를 활용한 상업용 이미지 생성 (50분)",
-                    "프롬프트를 통한 이미지 톤앤매너 제어 실습 (30분)",
-                    "Advanced Data Analysis를 활용한 엑셀 파일 분석 맛보기 (40분)"
-                ],
-                tools: ["DALL-E 3", "Midjourney", "ChatGPT ADA"],
-                theory: 40,
-                practice: 80
+                day: 4, phase: 'found', tag: 'Foundation',
+                title: "텍스트 AI 심화: 문서 요약 및 기획",
+                objective: "방대한 자료를 분석하고 실무 기획안으로 변환하는 고급 텍스트 처리 능력을 기른다.",
+                items: ["롱폼(Long-form) 문서 분석 및 요약 (40분)", "비즈니스 기획서 초안 작성 및 구조화 (40분)", "어조(Tone) 및 매너(Manner) 변환 실습 (40분)"],
+                keywords: ["Summarization", "Planning", "Tone of Voice"],
+                tip: "AI는 당신의 생각을 정리해주는 최고의 비즈니스 파트너입니다."
             },
             {
-                day: 5,
-                title: "업무 자동화 기초 (스프레드시트 연동)",
-                objective: "구글 시트 및 엑셀과 AI를 연동하여 대량의 데이터를 자동 처리하는 환경을 구축한다.",
-                content: [
-                    "구글 시트 확장 프로그램(GPT for Sheets) 설치 및 세팅 (30분)",
-                    "함수형 AI 프롬프트 작성 및 대량 텍스트 번역/분류 (50분)",
-                    "데이터 정제 및 포맷 통일 자동화 실습 (40분)"
-                ],
-                tools: ["Google Sheets", "GPT for Sheets 확장기능"],
-                theory: 30,
-                practice: 90
+                day: 5, phase: 'crea', tag: 'Creation',
+                title: "이미지 생성 AI 기초: DALL-E & Midjourney",
+                objective: "텍스트 프롬프트를 시각적 결과물로 변환하는 이미지 생성 기술을 습득한다.",
+                items: ["DALL-E 3와 Midjourney 기본 사용법 (40분)", "이미지 스타일, 조명, 구도 제어 프롬프트 (40분)", "저작권 및 상업적 이용 가이드라인 (40분)"],
+                keywords: ["DALL-E 3", "Midjourney", "Visual Prompting"],
+                tip: "눈으로 보는 이미지를 말로 묘사하는 훈련이 필요합니다."
             },
             {
-                day: 6,
-                title: "AI 기반 심층 데이터 시각화",
-                objective: "복잡한 데이터를 AI에게 맡겨 빠르고 정확한 시각화 차트와 인사이트 리포트를 얻어낸다.",
-                content: [
-                    "정형 데이터(CSV, Excel) 전처리 프로세스 이해 (30분)",
-                    "자연어 명령을 통한 다양한 차트(막대, 선, 산점도 등) 생성 (50분)",
-                    "데이터 기반 의사결정을 위한 인사이트 도출 실습 (40분)"
-                ],
-                tools: ["ChatGPT (Advanced Data Analysis)", "Excel"],
-                theory: 40,
-                practice: 80
+                day: 6, phase: 'crea', tag: 'Creation',
+                title: "이미지 생성 심화: 브랜드 및 디자인 활용",
+                objective: "로고, UI 디자인, 마케팅 에셋을 일관성 있게 생성하는 기법을 배운다.",
+                items: ["일관성 있는 캐릭터/오브젝트 생성 기술 (40분)", "로고 디자인 및 웹 UI 레이아웃 추출 (40분)", "이미지 확장(Outpainting) 및 편집 기술 (40분)"],
+                keywords: ["Consistency", "UI Design", "Inpainting"],
+                tip: "디자인 감각이 없어도 AI의 도움으로 전문가 수준의 시안을 만들 수 있습니다."
             },
             {
-                day: 7,
-                title: "나만의 맞춤형 AI 비서 만들기 (Custom GPTs)",
-                objective: "특정 업무 목적에 맞춰 회사 규정이나 지식을 학습시킨 전용 AI 챗봇을 설계한다.",
-                content: [
-                    "Custom GPTs의 개념 및 Builder 인터페이스 이해 (30분)",
-                    "Knowledge (지식 기반) 데이터 업로드 및 Instructions 작성 (50분)",
-                    "팀 내 공유 및 테스트 피드백 반영 (40분)"
-                ],
-                tools: ["ChatGPT Plus (Custom GPTs)"],
-                theory: 40,
-                practice: 80
+                day: 7, phase: 'crea', tag: 'Creation',
+                title: "영상 및 음성 AI: 멀티모달 확장",
+                objective: "텍스트에서 영상과 음성을 생성하여 콘텐츠 제작 범위를 확장한다.",
+                items: ["Runway/Sora 등을 활용한 텍스트-영상 생성 (40분)", "ElevenLabs를 활용한 고품질 AI 보이스 생성 (40분)", "음악 생성 AI(Suno) 활용 및 배경음악 제작 (40분)"],
+                keywords: ["AI Video", "Voice Cloning", "Music Generation"],
+                tip: "이제 혼자서도 영화 한 편을 만들 수 있는 시대가 되었습니다."
             },
             {
-                day: 8,
-                title: "최종 프로젝트 및 워크플로우 완성",
-                objective: "8주간 배운 내용을 종합하여 본인의 실제 업무를 개선하는 최종 워크플로우를 완성한다.",
-                content: [
-                    "개인별 맞춤형 AI 자동화 파이프라인 설계 (30분)",
-                    "최종 프로젝트 실습 및 튜터 1:1 코칭 (60분)",
-                    "프로젝트 결과물 시연 및 상호 피드백, 향후 발전 방향 (30분)"
-                ],
-                tools: ["전체 AI 도구 종합 활용"],
-                theory: 20,
-                practice: 100
+                day: 8, phase: 'crea', tag: 'Creation',
+                title: "AI 기반 프레젠테이션 및 보고서 자동화",
+                objective: "아이디어만으로 발표 자료를 자동 구성하고 디자인하는 워크플로우를 완성한다.",
+                items: ["Gamma/Beautiful.ai를 활용한 슬라이드 자동 생성 (40분)", "AI 생성 이미지를 활용한 시각적 발표 자료 고도화 (40분)", "1분 스피치 대본 및 Q&A 예상 질문 생성 (40분)"],
+                keywords: ["Gamma", "Presentation", "Storytelling"],
+                tip: "내용만 고민하세요. 디자인은 AI가 책임집니다."
+            },
+            {
+                day: 9, phase: 'auto', tag: 'Automation',
+                title: "데이터 분석 AI 기초: ChatGPT ADA",
+                objective: "복잡한 엑셀 데이터를 AI에게 맡겨 통계 분석 및 시각화를 수행한다.",
+                items: ["데이터 전처리 및 결측치 처리 자동화 (40분)", "기초 통계 분석 및 상관관계 도출 (40분)", "데이터 기반 차트 및 그래프 자동 생성 (40분)"],
+                keywords: ["Data Analysis", "ADA", "Preprocessing"],
+                tip: "숫자가 두렵다면 AI에게 질문하세요. 데이터의 숨은 뜻을 알려줄 것입니다."
+            },
+            {
+                day: 10, phase: 'auto', tag: 'Automation',
+                title: "엑셀/스프레드시트 AI 연동 및 자동화",
+                objective: "함수와 스크립트 없이 AI 확장 기능을 통해 대량의 데이터를 처리한다.",
+                items: ["GPT for Sheets/Excel 설치 및 기본 함수 (40분)", "대량의 데이터 분류, 번역, 감성 분석 실습 (40분)", "복잡한 엑셀 수식 AI로 생성하기 (40분)"],
+                keywords: ["GPT for Sheets", "Automation", "Bulk Processing"],
+                tip: "단순 반복적인 엑셀 작업은 이제 AI에게 넘기세요."
+            },
+            {
+                day: 11, phase: 'auto', tag: 'Automation',
+                title: "노코드 업무 자동화 기초: Zapier + AI",
+                objective: "서로 다른 앱을 AI로 연결하여 이메일, 메신저 업무를 자동화한다.",
+                items: ["Zapier의 개념 및 AI 기능 연동 원리 (40분)", "이메일 수신 시 자동 요약 및 슬랙 알림 구축 (40분)", "AI 기반 자동 캘린더 관리 워크플로우 (40분)"],
+                keywords: ["Zapier", "No-code", "Workflow"],
+                tip: "잠자는 동안에도 AI는 당신의 업무를 처리합니다."
+            },
+            {
+                day: 12, phase: 'auto', tag: 'Automation',
+                title: "AI 비서 구축: 일정 및 커뮤니케이션 관리",
+                objective: "개인 비서 역할을 하는 AI 워크플로우를 설계하여 생산성을 극대화한다.",
+                items: ["다양한 채널의 정보 통합 요약 시스템 구축 (40분)", "맞춤형 뉴스레터 및 트렌드 리포트 자동 생성 (40분)", "회의록 자동 기록 및 실행 항목(To-do) 추출 (40분)"],
+                keywords: ["Personal Assistant", "Notification", "Productivity"],
+                tip: "정말 중요한 일에만 집중할 수 있는 환경을 만드세요."
+            },
+            {
+                day: 13, phase: 'auto', tag: 'Advanced',
+                title: "나만의 맞춤형 GPTs 설계 및 구축",
+                objective: "특정 업무 지식을 학습시킨 전용 챗봇 에이전트를 만든다.",
+                items: ["Custom GPTs 빌더 인터페이스 및 구성 요소 (40분)", "지식 베이스(Knowledge) 최적화 및 Instructions 작성 (40분)", "에이전트 행동 지침 설정 및 테스트 (40분)"],
+                keywords: ["Custom GPTs", "Knowledge Base", "Agent"],
+                tip: "당신의 업무 노하우를 AI에게 복제해 보세요."
+            },
+            {
+                day: 14, phase: 'auto', tag: 'Advanced',
+                title: "실무 분야별 AI 에이전트 활용 시나리오",
+                objective: "마케팅, 인사, 재무 등 직무별 최적화된 AI 활용 시나리오를 완성한다.",
+                items: ["마케팅: 페르소나 설정 및 콘텐츠 전략 수립 (40분)", "인사/교육: 채용 공고 작성 및 교육 커리큘럼 설계 (40분)", "재무/운영: 비용 분석 및 효율성 개선 제안 (40분)"],
+                keywords: ["Marketing AI", "HR Tools", "Operations"],
+                tip: "모든 직무에는 AI가 파고들 틈이 있습니다."
+            },
+            {
+                day: 15, phase: 'found', tag: 'Advanced',
+                title: "AI 윤리, 보안 및 미래 트렌드",
+                objective: "안전하게 AI를 사용하기 위한 보안 수칙과 기술 변화 흐름을 이해한다.",
+                items: ["기업 데이터 유출 방지 및 보안 가이드라인 (40분)", "AI 환각(Hallucination) 및 편향성 대응법 (40분)", "차세대 AI 기술(멀티 에이전트, 온디바이스 AI) 전망 (40분)"],
+                keywords: ["AI Ethics", "Security", "Future Trends"],
+                tip: "기술을 아는 것만큼, 그 한계와 위험을 아는 것도 전문가의 자질입니다."
+            },
+            {
+                day: 16, phase: 'auto', tag: 'Final',
+                title: "종합 프로젝트: AI 기반 워크플로우 발표",
+                objective: "16일간 배운 내용을 종합하여 본인의 실제 업무를 개선한 결과를 공유한다.",
+                items: ["개별 최종 워크플로우 시연 및 발표 (60분)", "동료 피드백 및 전문가 코칭 (40분)", "향후 개인별 학습 로드맵 설정 및 수료 (20분)"],
+                keywords: ["Capstone Project", "Showcase", "Roadmap"],
+                tip: "오늘이 끝이 아니라, AI와 함께하는 새로운 커리어의 시작입니다."
             }
         ];
 
-        let ratioChartInstance = null;
-        let radarChartInstance = null;
-
-        function initApp() {
-            renderButtons();
-            selectDay(1); 
-            initCharts();
+        function init() {
+            renderDayList('all');
+            selectDay(1);
+            initChart();
         }
 
-        function renderButtons() {
-            const container = document.getElementById('day-buttons');
-            curriculumData.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = `tab-btn text-left px-5 py-4 rounded-xl border border-stone-200 font-medium transition-all duration-200 flex justify-between items-center hover:bg-stone-100 hover:border-stone-300 focus:outline-none`;
-                btn.id = `btn-day-${item.day}`;
-                btn.onclick = () => selectDay(item.day);
+        function renderDayList(phaseFilter) {
+            const list = document.getElementById('day-list');
+            list.innerHTML = '';
+            
+            curriculum.forEach(item => {
+                if (phaseFilter !== 'all' && !item.phase.startsWith(phaseFilter)) return;
                 
-                const dayText = document.createElement('span');
-                dayText.className = 'font-bold mr-2 w-12';
-                dayText.innerText = `Day ${item.day}`;
-                
-                const titleText = document.createElement('span');
-                titleText.className = 'text-sm flex-grow truncate';
-                titleText.innerText = item.title;
-
-                btn.appendChild(dayText);
-                btn.appendChild(titleText);
-                container.appendChild(btn);
+                const card = document.createElement('button');
+                card.id = `day-btn-${item.day}`;
+                card.onclick = () => selectDay(item.day);
+                card.className = "day-card w-full text-left p-4 rounded-2xl bg-white border border-stone-200 flex items-center group hover:border-teal-400";
+                card.innerHTML = `
+                    <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center font-bold text-stone-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
+                        ${item.day}
+                    </div>
+                    <div class="ml-4 flex-grow">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">${item.tag}</p>
+                        <p class="text-sm font-semibold text-stone-800 line-clamp-1">${item.title}</p>
+                    </div>
+                `;
+                list.appendChild(card);
             });
         }
 
         function selectDay(dayId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'shadow-md', 'transform', 'scale-[1.02]');
-                btn.classList.add('bg-white', 'text-stone-700');
-            });
-            
-            const activeBtn = document.getElementById(`btn-day-${dayId}`);
-            activeBtn.classList.add('active', 'shadow-md', 'transform', 'scale-[1.02]');
-            activeBtn.classList.remove('bg-white', 'text-stone-700');
+            document.querySelectorAll('.day-card').forEach(c => c.classList.remove('border-teal-500', 'bg-teal-50/30', 'ring-1', 'ring-teal-500'));
+            const activeCard = document.getElementById(`day-btn-${dayId}`);
+            if (activeCard) {
+                activeCard.classList.add('border-teal-500', 'bg-teal-50/30', 'ring-1', 'ring-teal-500');
+            }
 
-            const data = curriculumData.find(d => d.day === dayId);
+            const data = curriculum.find(d => d.day === dayId);
+            const panel = document.getElementById('detail-panel');
             
-            document.getElementById('detail-day-badge').innerText = `Week ${data.day} (Day ${data.day})`;
+            // Animation reset
+            panel.classList.remove('fade-in');
+            void panel.offsetWidth;
+            panel.classList.add('fade-in');
+
+            document.getElementById('detail-tag').innerText = data.tag;
             document.getElementById('detail-title').innerText = data.title;
             document.getElementById('detail-objective').innerText = data.objective;
-            
-            const listContainer = document.getElementById('detail-list');
-            listContainer.innerHTML = '';
-            data.content.forEach(item => {
+            document.getElementById('coach-tip').innerText = `"${data.tip}"`;
+
+            const list = document.getElementById('detail-items');
+            list.innerHTML = '';
+            data.items.forEach(it => {
                 const li = document.createElement('li');
-                li.className = 'flex items-start';
-                li.innerHTML = `<span class="text-teal-600 mr-2 mt-0.5">▪</span> <span>${item}</span>`;
-                listContainer.appendChild(li);
+                li.className = 'flex items-start text-stone-700 text-sm';
+                li.innerHTML = `<span class="text-teal-500 mr-3 mt-1 text-xs">●</span> <span>${it}</span>`;
+                list.appendChild(li);
             });
 
-            const toolsContainer = document.getElementById('detail-tools');
-            toolsContainer.innerHTML = '';
-            data.tools.forEach(tool => {
-                const span = document.createElement('span');
-                span.className = 'bg-white border border-stone-300 text-stone-700 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm';
-                span.innerText = tool;
-                toolsContainer.appendChild(span);
+            const kw = document.getElementById('detail-keywords');
+            kw.innerHTML = '';
+            data.keywords.forEach(k => {
+                const s = document.createElement('span');
+                s.className = 'bg-stone-100 text-stone-500 text-[10px] font-bold px-3 py-1.5 rounded-full border border-stone-200';
+                s.innerText = k;
+                kw.appendChild(s);
             });
-
-            const contentDiv = document.getElementById('detail-content');
-            contentDiv.classList.remove('fade-in');
-            void contentDiv.offsetWidth;
-            contentDiv.classList.add('fade-in');
         }
 
-        function initCharts() {
-            let totalTheory = 0;
-            let totalPractice = 0;
-            curriculumData.forEach(d => {
-                totalTheory += d.theory;
-                totalPractice += d.practice;
-            });
+        function filterPhase(phase) {
+            document.querySelectorAll('.phase-btn').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(`btn-${phase}`).classList.add('active-tab');
+            renderDayList(phase);
+        }
 
-            const ctxRatio = document.getElementById('ratioChart').getContext('2d');
-            ratioChartInstance = new Chart(ctxRatio, {
-                type: 'doughnut',
+        function initChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['이론 및 원리', '실습 및 프로젝트'],
-                    datasets: [{
-                        data: [totalTheory, totalPractice],
-                        backgroundColor: ['#d6d3d1', '#0f766e'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: "'Noto Sans KR', sans-serif" } } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) { label += ': '; }
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const value = context.raw;
-                                    const percentage = Math.round((value / total) * 100) + '%';
-                                    return label + context.raw + '분 (' + percentage + ')';
-                                }
-                            }
-                        }
-                    },
-                    cutout: '65%'
-                }
-            });
-
-            const ctxRadar = document.getElementById('radarChart').getContext('2d');
-            radarChartInstance = new Chart(ctxRadar, {
-                type: 'radar',
-                data: {
-                    labels: [
-                        '기획 및 아이디에이션', 
-                        '문서 작성 속도', 
-                        '데이터 분석력', 
-                        '업무 자동화 수준', 
-                        '최신 기술 이해도'
-                    ],
+                    labels: curriculum.map(d => `Day ${d.day}`),
                     datasets: [
                         {
-                            label: '교육 전 (Before)',
-                            data: [3, 4, 2, 1, 2],
-                            fill: true,
-                            backgroundColor: 'rgba(214, 211, 209, 0.4)',
-                            borderColor: 'rgb(168, 162, 158)',
-                            pointBackgroundColor: 'rgb(168, 162, 158)',
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgb(168, 162, 158)'
+                            label: '프롬프트 숙련도',
+                            data: [20, 45, 60, 75, 80, 85, 85, 90, 92, 95, 96, 97, 98, 99, 100, 100],
+                            borderColor: '#0d9488',
+                            tension: 0.4,
+                            pointRadius: 0
                         },
                         {
-                            label: '교육 후 (After 8주)',
-                            data: [8, 9, 7, 8, 9],
-                            fill: true,
-                            backgroundColor: 'rgba(15, 118, 110, 0.4)',
-                            borderColor: 'rgb(15, 118, 110)',
-                            pointBackgroundColor: 'rgb(15, 118, 110)',
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgb(15, 118, 110)'
+                            label: '멀티모달 창작 능력',
+                            data: [5, 10, 15, 20, 50, 75, 85, 90, 92, 92, 93, 94, 95, 96, 97, 100],
+                            borderColor: '#334155',
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '업무 자동화 역량',
+                            data: [0, 5, 10, 15, 15, 20, 25, 30, 60, 80, 90, 95, 97, 98, 99, 100],
+                            borderColor: '#78716c',
+                            tension: 0.4,
+                            pointRadius: 0
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
-                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                            pointLabels: { font: { family: "'Noto Sans KR', sans-serif", size: 12 }, color: '#444' },
-                            ticks: { display: false, min: 0, max: 10 }
-                        }
-                    },
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: "'Noto Sans KR', sans-serif" } } }
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, font: { family: "'Noto Sans KR', sans-serif" } } }
+                    },
+                    scales: {
+                        y: { display: false, min: 0, max: 110 },
+                        x: { grid: { display: false } }
                     }
                 }
             });
         }
 
-        function scrollToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-        }
-
-        document.addEventListener('DOMContentLoaded', initApp);
+        window.onload = init;
     </script>
 </body>
 </html>
