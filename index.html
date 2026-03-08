@@ -30,13 +30,22 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .security-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #fee2e2;
+            color: #ef4444;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-stone-50 text-stone-800 antialiased">
 
-<!-- Chosen Palette: Warm Neutrals with Deep Teal and Soft Slate -->
-<!-- Application Structure Plan: Dashboard with interactive phase filtering and per-item state management for memos. The card structure was refactored from a single button to a complex container to allow nested interactions (memo input, save, edit) without interfering with the primary item selection. -->
-<!-- Visualization & Content Choices: 1. Phase Filtering -> Organize -> Dynamic rendering -> Vanilla JS. 2. Memo Feature -> Interact -> Per-day stateful input/display -> JS Array objects. 3. Progress Chart -> Change -> Line Chart -> Chart.js. -->
+<!-- Chosen Palette: Warm Neutrals with Deep Teal and Security Red accents -->
+<!-- Application Structure Plan: Dashboard with interactive filtering. Added a nested 'Security Layer' for the memo system. Each card manages its own authentication state locally to allow multiple memo interactions simultaneously. The password is hardcoded as '1234' for this demonstration but can be easily modified. -->
+<!-- Visualization & Content Choices: 1. Phase Filtering -> Organize -> Dynamic rendering -> Vanilla JS. 2. Password Protected Memo -> Secure -> Modal-less inline authentication -> JS conditional rendering. 3. Skill Analytics -> Line Chart -> Chart.js. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
     <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
@@ -45,8 +54,8 @@
                 <div class="font-bold text-xl text-teal-800 flex items-center">
                     <span class="mr-2">🚀</span> AI 16-Day Roadmap
                 </div>
-                <div class="text-sm font-medium text-stone-500">
-                    32 Hours Total (2h × 16d)
+                <div class="flex items-center space-x-4">
+                    <span class="text-[10px] bg-stone-100 px-2 py-1 rounded text-stone-500 font-bold uppercase tracking-tighter">Initial Pass: 1234</span>
                 </div>
             </div>
         </div>
@@ -57,9 +66,10 @@
         <section class="mb-10">
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-stone-100 flex flex-col md:flex-row gap-8 items-center">
                 <div class="flex-grow">
-                    <h1 class="text-3xl font-bold text-stone-900 mb-4 tracking-tight">AI 실무 마스터: 16일의 여정</h1>
-                    <p class="text-stone-600 leading-relaxed">
-                        각 강의 카드의 우측 하단 <strong>메모</strong> 버튼을 통해 개인적인 학습 계획이나 아이디어를 기록해 보세요.
+                    <h1 class="text-3xl font-bold text-stone-900 mb-4 tracking-tight text-center md:text-left">보안 강화 AI 학습 로드맵</h1>
+                    <p class="text-stone-600 leading-relaxed text-center md:text-left">
+                        각 강의 카드 하단의 <strong>메모</strong> 버튼을 통해 기록을 남길 수 있습니다. 
+                        <span class="text-teal-700 font-bold underline decoration-teal-200">비밀번호 인증(1234)</span>을 거쳐야만 저장이 가능합니다.
                     </p>
                 </div>
             </div>
@@ -75,7 +85,7 @@
                         <button onclick="filterPhase('crea')" id="btn-crea" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">창작</button>
                         <button onclick="filterPhase('auto')" id="btn-auto" class="phase-btn flex-1 py-2 text-xs font-bold rounded-lg border border-stone-200 bg-white hover:bg-stone-50">자동화</button>
                     </div>
-                    <div class="h-[700px] overflow-y-auto custom-scrollbar pr-2 space-y-4" id="day-list">
+                    <div class="h-[750px] overflow-y-auto custom-scrollbar pr-2 space-y-4" id="day-list">
                         <!-- Days injected by JS -->
                     </div>
                 </div>
@@ -108,7 +118,6 @@
             </div>
         </section>
 
-        <!-- Visual Skill Analytics -->
         <section class="mb-16">
             <h3 class="text-xl font-bold text-stone-900 mb-8 flex items-center">
                 <span class="w-8 h-8 bg-teal-700 text-white rounded-full flex items-center justify-center text-sm mr-3">📈</span> 역량 성장 시뮬레이션
@@ -122,12 +131,18 @@
 
     </main>
 
+    <!-- Error Toast Message (Custom Alert) -->
+    <div id="toast-message" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-full shadow-2xl font-bold text-sm opacity-0 pointer-events-none transition-all duration-300 z-[100]">
+        비밀번호가 일치하지 않습니다!
+    </div>
+
     <footer class="bg-stone-900 text-stone-500 py-12 text-center text-sm">
-        <p>&copy; 2026 AI Curriculum Master Program.</p>
+        <p>&copy; 2026 AI Curriculum Master Program - Security Enabled.</p>
     </footer>
 
     <script>
-        // 초기 데이터 세트 (메모 속성 추가)
+        const MASTER_PASSWORD = "1234";
+
         const curriculum = [
             { day: 1, phase: 'found', tag: 'Foundation', title: "생성형 AI의 이해와 업무 패러다임", objective: "생성형 AI의 기술적 배경을 이해하고 AI와 협업하는 마인드셋을 확립한다.", items: ["AI 트렌드와 산업별 변화", "LLM의 작동 원리 이해", "기초 대화 세팅"], tip: "AI를 단순한 도구가 아닌 똑똑한 비서로 대우해 보세요.", memo: "" },
             { day: 2, phase: 'found', tag: 'Foundation', title: "프롬프트 엔지니어링 1: 구조화 기술", objective: "원하는 결과를 즉시 얻기 위한 구조적 프롬프트 작성 공식을 마스터한다.", items: ["역할 부여와 배경 설정", "제약 조건 및 출력 형식 지정", "Zero-shot vs Few-shot 실습"], tip: "질문이 구체적일수록 AI의 답변 수준이 올라갑니다.", memo: "" },
@@ -143,7 +158,7 @@
             { day: 12, phase: 'auto', tag: 'Automation', title: "AI 비서 구축: 일정 및 커뮤니케이션", objective: "개인 비서 역할을 하는 AI 시스템을 설계하여 생산성을 극대화한다.", items: ["정보 통합 요약 시스템", "트렌드 리포트 자동 생성", "회의록 자동 추출 및 To-do 생성"], tip: "정보 과잉 시대, AI로 핵심만 요약해서 관리하세요.", memo: "" },
             { day: 13, phase: 'auto', tag: 'Advanced', title: "나만의 맞춤형 GPTs 설계", objective: "특정 업무 지식을 학습시킨 전용 챗봇 에이전트를 만든다.", items: ["Custom GPTs 구성 요소 이해", "지식 베이스 최적화 기법", "에이전트 행동 지침 설정"], tip: "당신의 업무 노하우를 AI 봇에 그대로 녹여내세요.", memo: "" },
             { day: 14, phase: 'auto', tag: 'Advanced', title: "직무별 AI 활용 시나리오 완성", objective: "마케팅, 인사, 재무 등 직무별 최적화된 활용 시나리오를 완성한다.", items: ["페르소나 기반 전략 수립", "채용 및 교육 커리큘럼 설계", "비용 분석 및 개선 제안"], tip: "우리 팀만의 AI 활용 가이드라인을 만들어 보세요.", memo: "" },
-            { day: 15, phase: 'auto', tag: 'Advanced', title: "AI 윤리, 보안 및 미래 전략", objective: "안전하게 AI를 사용하기 위한 보안 수칙과 기술 변화 흐름을 이해한다.", items: ["기업 데이터 보안 가이드", "환각 현상 대응 전략", "미래 AI 기술 전망"], keywords: ["Security", "Ethics"], tip: "기술을 잘 쓰는 것만큼 보안을 지키는 것도 중요합니다.", memo: "" },
+            { day: 15, phase: 'auto', tag: 'Advanced', title: "AI 윤리, 보안 및 미래 전략", objective: "안전하게 AI를 사용하기 위한 보안 수칙과 기술 변화 흐름을 이해한다.", items: ["기업 데이터 보안 가이드", "환각 현상 대응 전략", "미래 AI 기술 전망"], tip: "기술을 잘 쓰는 것만큼 보안을 지키는 것도 중요합니다.", memo: "" },
             { day: 16, phase: 'auto', tag: 'Final', title: "종합 프로젝트: AI 워크플로우 발표", objective: "16일간 배운 내용을 종합하여 본인의 업무 개선 결과를 공유한다.", items: ["최종 워크플로우 시연", "동료 피드백 및 코칭", "개인별 학습 로드맵 수료"], tip: "오늘의 수료가 새로운 AI 커리어의 시작입니다.", memo: "" }
         ];
 
@@ -172,39 +187,59 @@
             filtered.forEach(item => {
                 const card = document.createElement('div');
                 card.id = `day-card-${item.day}`;
-                card.className = "day-card w-full p-5 rounded-3xl bg-white border border-stone-200 flex flex-col fade-in";
+                card.className = "day-card w-full p-5 rounded-3xl bg-white border border-stone-200 flex flex-col fade-in relative overflow-hidden";
                 card.onclick = (e) => {
                     // 입력창이나 버튼 클릭 시 카드 선택 방지
-                    if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                    if(['INPUT', 'BUTTON', 'TEXTAREA'].includes(e.target.tagName)) return;
                     selectDay(item.day);
                 };
 
                 const memoHtml = item.memo 
-                    ? `<p class="mt-3 text-xs text-stone-500 bg-stone-50 p-3 rounded-xl border border-stone-100 line-clamp-2 italic">“${item.memo}”</p>`
+                    ? `<div class="mt-3 text-[11px] text-stone-500 bg-stone-50 p-3 rounded-2xl border border-stone-100 flex items-start italic leading-relaxed">
+                         <span class="mr-2 opacity-50 italic">"</span>
+                         <span>${item.memo}</span>
+                         <span class="ml-1 opacity-50 italic">"</span>
+                       </div>`
                     : '';
 
                 card.innerHTML = `
-                    <div class="flex items-center mb-2">
-                        <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center font-bold text-stone-400">
-                            ${item.day}
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center font-bold text-stone-400">
+                                ${item.day}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">${item.tag}</p>
+                                <p class="text-sm font-semibold text-stone-800">${item.title}</p>
+                            </div>
                         </div>
-                        <div class="ml-3 flex-grow">
-                            <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest">${item.tag}</p>
-                            <p class="text-sm font-semibold text-stone-800">${item.title}</p>
-                        </div>
+                        <div id="auth-badge-${item.day}" class="hidden security-badge">LOCKED</div>
                     </div>
                     ${memoHtml}
                     <div id="memo-section-${item.day}" class="mt-4 flex flex-col">
-                        <div id="memo-input-group-${item.day}" class="hidden mb-2">
-                            <input type="text" id="memo-input-${item.day}" value="${item.memo}" class="w-full text-xs p-2.5 border border-teal-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 mb-2" placeholder="메모를 입력하세요...">
+                        <!-- Step 1: Password Prompt -->
+                        <div id="pass-prompt-${item.day}" class="hidden mb-2 bg-stone-900 p-3 rounded-2xl">
+                            <p class="text-[9px] text-stone-400 font-bold mb-2 uppercase tracking-tighter">Enter Password (1234)</p>
                             <div class="flex space-x-2">
-                                <button onclick="saveMemo(${item.day})" class="flex-1 bg-teal-700 text-white text-[10px] py-1.5 rounded-lg font-bold hover:bg-teal-800">저장</button>
-                                <button onclick="toggleMemo(${item.day}, false)" class="flex-1 bg-stone-200 text-stone-600 text-[10px] py-1.5 rounded-lg font-bold">취소</button>
+                                <input type="password" id="pass-input-${item.day}" class="flex-grow bg-white/10 text-white text-xs px-3 py-1.5 rounded-lg border border-white/20 focus:outline-none focus:border-teal-500" placeholder="••••">
+                                <button onclick="verifyPassword(${item.day})" class="bg-teal-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-bold hover:bg-teal-500">인증</button>
+                                <button onclick="cancelMemo(${item.day})" class="text-white/40 text-[10px] px-2">X</button>
                             </div>
                         </div>
-                        <div class="flex justify-end">
-                            <button onclick="toggleMemo(${item.day}, true)" class="text-[10px] font-bold ${item.memo ? 'text-teal-600' : 'text-stone-400'} hover:text-teal-800 transition-colors">
-                                ${item.memo ? '📝 수정' : '➕ 메모'}
+                        <!-- Step 2: Memo Input -->
+                        <div id="memo-input-group-${item.day}" class="hidden mb-2">
+                            <textarea id="memo-input-${item.day}" rows="2" class="w-full text-xs p-3 border border-teal-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 mb-2 bg-teal-50/30" placeholder="학습 계획을 입력하세요...">${item.memo}</textarea>
+                            <div class="flex space-x-2">
+                                <button onclick="saveMemo(${item.day})" class="flex-1 bg-teal-700 text-white text-[10px] py-2 rounded-xl font-bold hover:bg-teal-800 transition-colors shadow-sm">저장하기</button>
+                                <button onclick="cancelMemo(${item.day})" class="flex-1 bg-stone-200 text-stone-600 text-[10px] py-2 rounded-xl font-bold">취소</button>
+                            </div>
+                        </div>
+                        <!-- Memo Toggle Button -->
+                        <div class="flex justify-end mt-1">
+                            <button onclick="requestMemo(${item.day})" class="flex items-center space-x-1 py-1 px-3 rounded-full hover:bg-stone-50 transition-colors">
+                                <span class="text-[10px] font-bold ${item.memo ? 'text-teal-600 underline' : 'text-stone-400'}">
+                                    ${item.memo ? '📝 수정하기' : '➕ 메모 추가'}
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -237,20 +272,29 @@
             list.innerHTML = '';
             data.items.forEach(it => {
                 const li = document.createElement('li');
-                li.className = 'flex items-start';
-                li.innerHTML = `<span class="text-teal-500 mr-2">✔</span> <span>${it}</span>`;
+                li.className = 'flex items-start text-sm text-stone-600';
+                li.innerHTML = `<span class="text-teal-500 mr-3 mt-1 text-[10px]">●</span> <span>${it}</span>`;
                 list.appendChild(li);
             });
         }
 
-        // 메모 기능 로직
-        function toggleMemo(dayId, show) {
-            const inputGroup = document.getElementById(`memo-input-group-${dayId}`);
-            if (show) {
-                inputGroup.classList.remove('hidden');
+        // Security Memo Logic
+        function requestMemo(dayId) {
+            // Hide any other prompts if open (optional)
+            document.getElementById(`pass-prompt-${dayId}`).classList.remove('hidden');
+            document.getElementById(`pass-input-${dayId}`).focus();
+        }
+
+        function verifyPassword(dayId) {
+            const input = document.getElementById(`pass-input-${dayId}`);
+            if (input.value === MASTER_PASSWORD) {
+                document.getElementById(`pass-prompt-${dayId}`).classList.add('hidden');
+                document.getElementById(`memo-input-group-${dayId}`).classList.remove('hidden');
                 document.getElementById(`memo-input-${dayId}`).focus();
             } else {
-                inputGroup.classList.add('hidden');
+                showToast("비밀번호가 일치하지 않습니다!");
+                input.value = "";
+                input.focus();
             }
         }
 
@@ -259,9 +303,27 @@
             const index = curriculum.findIndex(d => d.day === dayId);
             if (index !== -1) {
                 curriculum[index].memo = val;
-                renderDayList(); // 리스트 즉시 업데이트
-                selectDay(dayId); // 선택 상태 유지
+                renderDayList(); 
+                selectDay(dayId);
+                showToast("성공적으로 저장되었습니다!", true);
             }
+        }
+
+        function cancelMemo(dayId) {
+            document.getElementById(`pass-prompt-${dayId}`).classList.add('hidden');
+            document.getElementById(`memo-input-group-${dayId}`).classList.add('hidden');
+        }
+
+        function showToast(msg, isSuccess = false) {
+            const toast = document.getElementById('toast-message');
+            toast.innerText = msg;
+            toast.style.backgroundColor = isSuccess ? "#0d9488" : "#dc2626";
+            toast.style.opacity = "1";
+            toast.style.pointerEvents = "auto";
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.pointerEvents = "none";
+            }, 2500);
         }
 
         function initChart() {
@@ -271,12 +333,15 @@
                 data: {
                     labels: curriculum.map(d => `${d.day}일`),
                     datasets: [{
-                        label: '종합 AI 역량 지수',
-                        data: [10, 25, 40, 50, 60, 70, 78, 85, 88, 92, 94, 96, 97, 98, 99, 100],
+                        label: '종합 역량 지수',
+                        data: [10, 22, 38, 45, 58, 68, 75, 82, 88, 92, 94, 96, 97, 98, 99, 100],
                         borderColor: '#0d9488',
                         backgroundColor: 'rgba(13, 148, 136, 0.1)',
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#0d9488'
                     }]
                 },
                 options: {
@@ -284,8 +349,8 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { display: false },
-                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        y: { display: false, min: 0 },
+                        x: { grid: { display: false }, ticks: { font: { size: 9, weight: 'bold' }, color: '#a8a29e' } }
                     }
                 }
             });
