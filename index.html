@@ -45,7 +45,6 @@
             color: #1e293b;
         }
         
-        /* 도구 섹션 전용 디자인 (기존 theory-box 활용) */
         .theory-box {
             background-color: #fffbeb;
             border: 1px solid #fde68a;
@@ -76,8 +75,7 @@
             <div class="bg-gradient-to-br from-teal-900 to-teal-700 rounded-3xl p-8 md:p-12 shadow-xl text-white">
                 <h1 class="text-3xl md:text-4xl font-bold mb-4 tracking-tight">AI 실전 워크북 & 도구 대시보드</h1>
                 <p class="text-teal-50 leading-relaxed text-lg opacity-90 max-w-4xl">
-                    각 주차별로 제공되는 <strong>[핵심 AI 도구 활용법]</strong>을 통해 원리를 이해하고, 실무에 적용하는 힘을 기르세요. 
-                    단순한 사용을 넘어 멀티모달 콘텐츠를 자유자재로 다루는 전문가로 성장합니다.
+                    각 주차별로 제공되는 <strong>[핵심 AI 도구 활용법]</strong>과 그 기반이 되는 <strong>[이론적 배경]</strong>을 통해 원리를 이해하고, 실무에 적용하는 힘을 기르세요. 단순한 사용을 넘어 멀티모달 콘텐츠를 자유자재로 다루는 전문가로 성장합니다.
                 </p>
             </div>
         </header>
@@ -88,10 +86,10 @@
                 <div class="xl:w-2/5">
                     <div class="mb-6 flex space-x-2 bg-white p-1 rounded-2xl shadow-sm border border-stone-200 overflow-x-auto custom-scrollbar">
                         <button onclick="filterPhase('all')" id="btn-all" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all active-tab">전체보기</button>
-                        <button onclick="filterPhase('week1')" id="btn-week1" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">1주차(1-4)</button>
-                        <button onclick="filterPhase('week2')" id="btn-week2" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">2주차(5-8)</button>
-                        <button onclick="filterPhase('week3')" id="btn-week3" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">3주차(9-12)</button>
-                        <button onclick="filterPhase('week4')" id="btn-week4" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">4주차(13-16)</button>
+                        <button onclick="filterPhase('week1')" id="btn-week1" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">1주차</button>
+                        <button onclick="filterPhase('week2')" id="btn-week2" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">2주차</button>
+                        <button onclick="filterPhase('week3')" id="btn-week3" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">3주차</button>
+                        <button onclick="filterPhase('week4')" id="btn-week4" class="phase-btn flex-1 py-2 px-3 min-w-[70px] text-xs font-bold rounded-xl transition-all">4주차</button>
                     </div>
 
                     <div class="h-[850px] overflow-y-auto custom-scrollbar pr-3 space-y-4" id="day-list">
@@ -100,17 +98,22 @@
 
                 <div class="xl:w-3/5">
                     <div id="detail-panel" class="bg-white rounded-3xl shadow-xl border border-stone-200 overflow-hidden sticky top-24 flex flex-col fade-in">
-                        <div id="detail-header" class="bg-stone-900 p-8 text-white">
+                        <div id="detail-header" class="bg-stone-900 p-8 text-white relative">
                             <span id="detail-tag-display" class="inline-block bg-teal-600 text-[10px] font-bold px-2 py-0.5 rounded mb-3 tracking-widest uppercase">Phase</span>
-                            <h2 id="detail-title" class="text-3xl font-bold leading-tight">강의를 선택해 주세요</h2>
+                            <h2 id="detail-title" class="text-3xl font-bold leading-tight mb-4">강의를 선택해 주세요</h2>
+                            <div class="flex items-center text-sm font-medium bg-stone-800 inline-block px-3 py-1.5 rounded-lg border border-stone-700">
+                                <span class="text-stone-400 mr-2">🛠️ 사용 도구 :</span>
+                                <span id="detail-tools" class="text-teal-400"></span>
+                            </div>
                         </div>
+                        
                         <div class="p-8 md:p-12 flex-grow max-h-[75vh] overflow-y-auto custom-scrollbar">
                             
-                            <div class="mb-12">
-                                <h4 class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-4 flex items-center">
-                                    <span class="w-2 h-2 bg-amber-500 rounded-full mr-2"></span> 사용 도구 (Tools)
+                            <div class="mb-10">
+                                <h4 class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-3 flex items-center">
+                                    <span class="w-2 h-2 bg-amber-500 rounded-full mr-2"></span> 이론적 배경 (Theoretical Background)
                                 </h4>
-                                <div id="detail-tools" class="theory-box text-stone-800 font-bold text-sm leading-relaxed"></div>
+                                <div id="detail-theory" class="theory-box text-stone-700 text-sm leading-relaxed"></div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -159,11 +162,11 @@
     </footer>
 
     <script>
-        // 새로운 커리큘럼 데이터 매핑
         const curriculum = [
             { 
                 day: 1, phase: 'week1', tag: 'Week 1: 아카이빙', title: "AI 비서 셋업 및 모델 비교", 
                 tools: "ChatGPT, Gemini",
+                theory: "ChatGPT와 Gemini는 거대한 텍스트 데이터를 학습한 '대형 언어 모델(LLM)'입니다. 두 모델은 학습한 데이터의 종류와 최적화 방식이 다르기 때문에, 동일한 질문에도 창의적 문장 생성에 강점을 보이거나(ChatGPT), 실시간 웹 검색 기반의 사실 전달에 강점을 보이는(Gemini) 등 '모델의 고유한 성향(Behavior)'이 다르게 나타납니다.",
                 purpose: "도구별 답변 성향을 파악하고 실무 목적에 맞는 AI 비서를 설정합니다.", 
                 steps: ["ChatGPT와 Gemini에 동일한 복잡한 시나리오 질문을 던져 답변의 논리성을 대조합니다.", "각 AI의 '맞춤형 지침' 기능을 활용해 나만의 전문 페르소나를 부여합니다."], 
                 prompt: "너는 이제부터 나의 '수석 전략 컨설턴트'야. 내가 업무 아이디어를 던지면 항상 1) 시장성 2) 실행 단계 3) 예상 리스크 관점에서 답변해줘.", 
@@ -173,6 +176,7 @@
             { 
                 day: 2, phase: 'week1', tag: 'Week 1: 아카이빙', title: "프롬프트 엔지니어링 6요소", 
                 tools: "ChatGPT, Gemini",
+                theory: "AI는 방대한 데이터 공간에서 '다음에 올 가장 자연스러운 단어'를 확률적으로 예측합니다. 역할, 대상, 톤 등의 6요소를 프롬프트에 입력하는 것은 AI가 탐색해야 할 오답의 범위(확률 공간)를 좁혀주는 '제약 조건(Constraint Optimization)'으로 작용하여, 단번에 정확도 높은 결과물을 생성하도록 유도합니다.",
                 purpose: "질문의 질을 높여 AI로부터 한 번에 원하는 고품질 결과물을 얻습니다.", 
                 steps: ["역할, 대상, 목적, 톤, 형식, 제약을 포함한 6요소 프롬프트 구조를 학습합니다.", "단순 질문과 6요소 질문의 결과물을 1:1로 비교 평가합니다."], 
                 prompt: "[역할: 마케팅 팀장] [대상: MZ세대 고객] [목적: 신규 런칭 홍보] [제약: 전문 용어 배제, 3줄 요약 필수]. 우리 회사의 신규 서비스를 홍보하는 블로그 초안을 써줘.", 
@@ -182,6 +186,7 @@
             { 
                 day: 3, phase: 'week1', tag: 'Week 1: 아카이빙', title: "릴리스 AI - 정보의 초고속 요약", 
                 tools: "Lilys AI",
+                theory: "단순히 영상이나 글의 원문 문장을 몇 개 골라내는 '추출적 요약'과 다릅니다. 최신 AI는 전체 맥락(Context)을 이해한 뒤, 사람처럼 완전히 새로운 문장 구조로 핵심 의미만 재구성하여 압축하는 '생성적 요약(Abstractive Summarization)' 기술을 사용합니다.",
                 purpose: "긴 유튜브 영상이나 웹 기사의 핵심을 단 몇 초 만에 파악하여 지식 습득 시간을 단축합니다.", 
                 steps: ["릴리스 AI(Lilys AI)에 업무 관련 컨퍼런스 영상 링크를 넣고 요약 노트를 생성합니다.", "요약된 내용을 바탕으로 블로그 포스팅이나 보고서 초안으로 변환하는 기능을 실습합니다."], 
                 prompt: "(릴리스 AI 질문창) 이 영상에서 제안하는 최신 업무 효율화 툴 3가지만 뽑아서 표로 정리해줘.", 
@@ -191,6 +196,7 @@
             { 
                 day: 4, phase: 'week1', tag: 'Week 1: 아카이빙', title: "노트북LM - 지식의 뇌 통합", 
                 tools: "NotebookLM",
+                theory: "AI가 모르는 내용을 그럴듯하게 지어내는 현상(환각)을 막는 핵심 기술입니다. 질문을 받으면 AI가 가진 자체 지식으로 바로 답하는 대신, 사용자가 업로드한 문서(PDF, 메모 등) 내에서 먼저 정답의 근거를 '검색(Retrieval)'한 후 이를 바탕으로 답변을 '생성(Generation)'하는 RAG(검색 증강 생성) 기술입니다.",
                 purpose: "수십 개의 파편화된 PDF와 메모를 하나의 '지능형 지식 창고'로 통합 분석합니다.", 
                 steps: ["노트북LM(NotebookLM)에 프로젝트 관련 PDF, 구글 문서, 텍스트 메모를 모두 업로드합니다.", "업로드된 모든 소스를 관통하는 공통된 핵심 인사이트를 도출합니다."], 
                 prompt: "업로드한 모든 소스를 바탕으로, 이번 프로젝트에서 가장 주의해야 할 법적 리스크를 찾아 소스 위치와 함께 알려줘.", 
@@ -200,6 +206,7 @@
             { 
                 day: 5, phase: 'week2', tag: 'Week 2: 미디어 마스터', title: "이미지 생성 - DALL-E & 나노바나나", 
                 tools: "DALL-E 3, Nanobanana",
+                theory: "무작위 노이즈에서 시작해 점차 노이즈를 깎아내며 뚜렷한 이미지를 만드는 기술이 '디퓨전(Diffusion)'입니다. 사용자의 텍스트(프롬프트)는 AI가 수억 장의 이미지가 얽혀있는 '잠재 공간(Latent Space)'이라는 지도에서 원하는 화풍과 객체를 정확히 찾아내도록 돕는 나침반 역할을 합니다.",
                 purpose: "브랜드 아이덴티티에 맞는 감각적인 화풍과 논리적인 디자인 에셋을 생성합니다.", 
                 steps: ["DALL-E로 구체적인 상황 묘사 이미지를 생성합니다.", "나노바나나(Nanobanana) 모델의 예술적인 스타일을 활용해 브랜드 이미지를 고도화합니다."], 
                 prompt: "미래 지향적인 기술 컨셉의 도서 표지, 네온 샌드 아트 스타일, 나노바나나 모델 특유의 감각적인 색감과 질감을 강조해서 그려줘.", 
@@ -209,6 +216,7 @@
             { 
                 day: 6, phase: 'week2', tag: 'Week 2: 미디어 마스터', title: "이미지 편집 및 고도화 실습", 
                 tools: "DALL-E 3, Nanobanana",
+                theory: "이미지의 특정 부분(마스크 영역)을 지웠을 때, AI가 해당 빈 공간을 주변 픽셀의 조명, 질감, 원근감 등 '시각적 문맥(Context Awareness)'과 사용자의 텍스트 지시를 결합하여 이질감 없이 완전히 새로운 객체로 자연스럽게 채워 넣는 인페인팅(In-painting) 기술입니다.",
                 purpose: "생성된 이미지의 특정 부분을 수정하거나 배경을 변경하여 업무 목적에 맞춤화합니다.", 
                 steps: ["생성된 이미지의 개체를 지우거나 새로운 개체를 추가하는 In-painting을 실습합니다.", "하나의 컨셉을 유지한 채 다양한 비율(SNS용, PPT용)로 변형합니다."], 
                 prompt: "위 사진에서 인물이 들고 있는 컵을 아이패드로 바꿔주고, 배경을 좀 더 밝은 사무실 분위기로 수정해줘.", 
@@ -218,6 +226,7 @@
             { 
                 day: 7, phase: 'week2', tag: 'Week 2: 미디어 마스터', title: "영상 제작 - Veo 모델 실습", 
                 tools: "Veo",
+                theory: "텍스트를 영상으로 변환할 때는 수십 장의 이미지를 단순히 이어 붙이는 것을 넘어섭니다. 영상이 재생되는 동안 피사체의 물리적 움직임, 빛의 굴절, 배경의 원근감이 시간의 흐름에 따라 깨지지 않고 일관되게 유지되도록 계산하는 시공간적 일관성(Spatio-temporal Consistency) 기술이 적용됩니다.",
                 purpose: "텍스트만으로 고해상도 영상을 제작하여 보고서나 홍보 자료의 몰입감을 극대화합니다.", 
                 steps: ["Veo 모델을 사용하여 5~10초 내외의 시네마틱한 홍보 영상 클립을 생성합니다.", "카메라 워킹(줌, 팬)과 광원을 지시하는 영상용 상세 프롬프트를 학습합니다."], 
                 prompt: "시네마틱 드론 샷: 안개 낀 산맥 위를 빠르게 날아가며 구름 사이로 비치는 햇살을 담은 초고해상도 영상, 4K 스타일.", 
@@ -227,6 +236,7 @@
             { 
                 day: 8, phase: 'week2', tag: 'Week 2: 미디어 마스터', title: "음악 제작 - Gemini 오디오 생성", 
                 tools: "Gemini",
+                theory: "AI는 소리를 눈으로 볼 수 있는 주파수 이미지(스펙트로그램) 형태로 변환하여 학습합니다. 사용자가 '분위기'를 텍스트로 입력하면, AI는 그 무드에 맞는 시각 패턴을 먼저 그린 뒤, 이를 다시 소리(오디오 파형)로 디코딩하여 음악을 합성해 냅니다.",
                 purpose: "미디어 콘텐츠의 분위기에 완벽하게 부합하는 배경음악(BGM)을 독자적으로 제작합니다.", 
                 steps: ["Gemini의 음악 생성 기능을 활용하여 특정 무드(긴박한, 평화로운 등)를 정의합니다.", "영상(Veo)과 어울리는 멜로디와 비트의 음악을 생성하여 통합합니다."], 
                 prompt: "신제품 런칭 발표를 위한 30초 길이의 음악을 만들어줘. 현대적이고 세련된 비트가 있으며, 후반부로 갈수록 웅장해지는 느낌이어야 해.", 
@@ -236,6 +246,7 @@
             { 
                 day: 9, phase: 'week3', tag: 'Week 3: 데이터 & 인프라', title: "AI 기반 데이터 분석 및 리포트", 
                 tools: "ChatGPT, Advanced Analysis",
+                theory: "AI가 사람의 자연어 지시를 파이썬(Python) 같은 프로그래밍 언어로 변환한 뒤, 자체적인 가상 환경(샌드박스)에서 코드를 직접 실행(Code Interpreter)합니다. 이를 통해 복잡한 엑셀 수식 없이도 대용량 데이터의 결측치를 정제하고 정확한 통계와 차트를 도출할 수 있습니다.",
                 purpose: "복잡한 엑셀 데이터를 AI에게 맡겨 핵심 수치와 비즈니스 인사이트를 도출합니다.", 
                 steps: ["엑셀 데이터를 업로드하고 지저분한 데이터를 정제(Cleaning)하는 작업을 지시합니다.", "지표 간의 상관관계를 분석하고 보고서용 차트 이미지를 생성합니다."], 
                 prompt: "이 매출 데이터에서 가장 수익률이 낮은 제품군 3개를 찾고, 그 이유를 가설로 세워봐. 또한 이를 개선하기 위한 마케팅 제안을 해줘.", 
@@ -245,6 +256,7 @@
             { 
                 day: 10, phase: 'week3', tag: 'Week 3: 데이터 & 인프라', title: "시장 조사 및 글로벌 트렌드 서칭", 
                 tools: "Gemini, Search",
+                theory: "언어 모델은 학습이 끝난 시점 이후의 정보를 모른다는 단점(Cut-off)이 있습니다. 이를 극복하기 위해, 사용자의 질문을 실시간 웹 검색 엔진의 쿼리로 변환하고, 그 검색 결과를 AI의 답변 프롬프트에 동적으로 주입하여 '최신 사실에 기반(Web Grounding)한' 결과물을 도출합니다.",
                 purpose: "실시간 웹 서칭 기능을 활용해 경쟁사 동향과 글로벌 트렌드를 분석 리포트로 변환합니다.", 
                 steps: ["특정 산업의 최신 뉴스 10개를 요약하고 공통된 키워드를 추출합니다.", "경쟁사들의 최근 대응 전략을 비교하는 표를 생성합니다."], 
                 prompt: "현재 '국내 친환경 가전' 시장의 최신 트렌드를 3가지로 요약해주고, 삼성과 LG의 최근 대응 전략을 비교하는 표를 만들어줘.", 
@@ -254,6 +266,7 @@
             { 
                 day: 11, phase: 'week3', tag: 'Week 3: 데이터 & 인프라', title: "GitHub - 마크다운 문서화 정석", 
                 tools: "GitHub, Markdown",
+                theory: "AI와 기계가 정보를 빠르고 정확하게 읽을 수 있도록 텍스트에 태그 기호를 붙여 위계(제목, 본문, 표)를 부여하는 방법론(Structured Data)입니다. 인간도 읽기 쉬운 가벼운 구조화 포맷이 마크다운(Markdown)이며, 향후 AI 지식 창고를 구축할 때 가장 완벽한 데이터 재료가 됩니다.",
                 purpose: "코딩 없이 GitHub을 활용해 AI가 생성한 지식 자산을 체계적으로 아카이빙합니다.", 
                 steps: ["GitHub 저장소를 생성하고 README.md 파일에 오늘까지의 실습 내용을 정리합니다.", "마크다운의 제목, 표, 이미지 첨부 기능을 완벽히 익힙니다."], 
                 prompt: "오늘 배운 'AI 데이터 분석' 노하우를 주제로 [단계 / 핵심 도구 / 팁] 컬럼을 가진 마크다운 표 코드를 생성해줘.", 
@@ -263,6 +276,7 @@
             { 
                 day: 12, phase: 'week3', tag: 'Week 3: 데이터 & 인프라', title: "GitHub Projects - 업무 칸반 보드", 
                 tools: "GitHub Projects",
+                theory: "크고 모호한 목표를 실행 가능한 가장 작은 단위(Atomic Task)의 논리적 절차로 쪼개는 과업 분해(Task Decomposition)입니다. AI가 복잡한 문제를 해결할 때 사용하는 '생각의 사슬' 추론 원리를 인간의 실무 프로젝트 관리에 그대로 차용한 것입니다.",
                 purpose: "프로젝트 관리 시스템을 구축하여 할 일(Task)을 시각화하고 우선순위를 관리합니다.", 
                 steps: ["GitHub Projects 탭에서 칸반(Kanban) 보드 템플릿을 생성합니다.", "AI가 제안한 최종 프로젝트의 8가지 단계를 이슈 카드로 등록합니다."], 
                 prompt: "내가 4주차에 진행할 '나만의 AI 업무 메뉴얼' 프로젝트를 위해 8개의 구체적인 태스크(할 일) 목록을 우선순위에 따라 작성해줘.", 
@@ -272,6 +286,7 @@
             { 
                 day: 13, phase: 'week4', tag: 'Week 4: 통합 프로젝트', title: "통합 프로젝트 기획 및 자산 구성", 
                 tools: "NotebookLM, GitHub Projects",
+                theory: "텍스트, 이미지, 비디오, 오디오 등 서로 다른 형태의 데이터(모달리티)를 하나의 프로젝트로 매끄럽게 연결하기 위해, 각 AI 도구의 입력(Input)과 출력(Output)을 유기적인 톱니바퀴처럼 맞물리게 설계하는 멀티모달 파이프라인(Multimodal Pipeline) 설계입니다.",
                 purpose: "지식(노트북LM), 시각(나노바나나/Veo), 청각(Gemini)이 통합된 프로젝트 설계", 
                 steps: ["최종 결과물의 주제 선정 및 필요한 미디어 자산 목록을 이슈로 등록."], 
                 prompt: "내가 기획 중인 멀티모달 프로젝트를 위해 필요한 에셋(이미지, 영상, 오디오) 리스트와 각각의 제작 프롬프트 초안을 표 형태로 정리해줘.", 
@@ -281,6 +296,7 @@
             { 
                 day: 14, phase: 'week4', tag: 'Week 4: 통합 프로젝트', title: "멀티모달 콘텐츠 집중 제작", 
                 tools: "Nanobanana, Veo, Gemini",
+                theory: "글(텍스트)을 바탕으로 시각, 청각 등 이기종 데이터로 번역 및 생성(Cross-Modality)하는 과정입니다. 이때 가장 중요한 것은 다양한 AI 도구를 쓰더라도 최종 산출물들이 하나의 일관된 '브랜드 톤(Semantic Identity)'을 유지하도록 프롬프트의 톤앤매너를 동기화하는 것입니다.",
                 purpose: "기획에 따른 이미지, 영상, 음악 자산을 직접 생성 및 결합", 
                 steps: ["나노바나나로 디자인 에셋 생성", "Veo로 홍보 영상 제작", "Gemini로 배경음악 제작"], 
                 prompt: "(1~3주차에서 학습한 텍스트/이미지/영상/음악 프롬프트를 종합적으로 활용하여 실제 에셋을 생성합니다.)", 
@@ -290,6 +306,7 @@
             { 
                 day: 15, phase: 'week4', tag: 'Week 4: 통합 프로젝트', title: "AI 피어 리뷰 및 최종 고도화", 
                 tools: "ChatGPT, Gemini",
+                theory: "생성된 결과물의 퀄리티를 높이기 위해, AI에게 의도적으로 까다로운 '비판적 검토자(Red Team)' 페르소나를 부여하여 논리적 허점이나 시각적 결함을 찾아내게 합니다. 이 자가 검증(Feedback Loop) 과정을 통해 인간이 놓친 디테일을 보완합니다.",
                 purpose: "AI를 전문 에디터로 활용하여 결과물의 완성도 극대화", 
                 steps: ["완성된 프로젝트를 AI에게 검수받아 오타, 논리 오류 등을 최종 수정."], 
                 prompt: "내가 작성한 프로젝트 최종 결과물 초안이야. 전문가의 시각에서 논리적 비약이나 시각/청각 자료의 배치 상 어색한 부분을 찾아 수정 제안을 해줘.", 
@@ -299,6 +316,7 @@
             { 
                 day: 16, phase: 'week4', tag: 'Week 4: 통합 프로젝트', title: "GitHub Pages 배포 및 회고", 
                 tools: "GitHub Pages",
+                theory: "AI 기술을 단발성 검색 도구로 쓰는 것을 넘어, 실무자의 일상적인 워크플로우 안에 AI가 반복적으로 개입하여 업무를 자동화하는 '에이전트(Agent)'로 내재화하는 과정입니다. AI가 주도하고 인간이 최종 결정 및 방향을 수정하는 가장 이상적인 협업 모델(Human-in-the-Loop)입니다.",
                 purpose: "학습 내용을 포트폴리오로 공개하고 미래 루틴 수립", 
                 steps: ["최종 결과물을 웹에 배포하고, 16일간의 경험을 회고하는 AI 데일리 루틴 설계."], 
                 prompt: "나만의 AI 활용 워크플로우를 돌아보며, 앞으로 매일 15분씩 실천할 수 있는 '데일리 AI 루틴'을 3단계로 구성해줘.", 
@@ -400,6 +418,7 @@
             document.getElementById('detail-tag-display').innerText = `Day ${data.day} | ${data.tag}`;
             document.getElementById('detail-title').innerText = data.title;
             document.getElementById('detail-tools').innerText = data.tools;
+            document.getElementById('detail-theory').innerText = data.theory;
             document.getElementById('detail-purpose').innerText = data.purpose;
             document.getElementById('detail-prompt').innerText = data.prompt;
             document.getElementById('detail-expected').innerText = data.expected;
